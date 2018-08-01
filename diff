@@ -1,0 +1,1656 @@
+diff --git a/E2EDotNet.Tests/App.config b/E2EDotNet.Tests/App.config
+index d736f67..2bd1a5b 100644
+--- a/E2EDotNet.Tests/App.config
++++ b/E2EDotNet.Tests/App.config
+@@ -1,4 +1,4 @@
+-﻿<?xml version="1.0" encoding="utf-8" ?>
++﻿<?xml version="1.0" encoding="utf-8"?>
+ <!--
+     Note: Add entries to the App.config file for configuration settings
+     that apply only to the Test project.
+@@ -11,4 +11,24 @@
+     <connectionStrings>
+ 
+     </connectionStrings>
++  <runtime>
++    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
++      <dependentAssembly>
++        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />
++        <bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
++      </dependentAssembly>
++      <dependentAssembly>
++        <assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f" culture="neutral" />
++        <bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2" />
++      </dependentAssembly>
++      <dependentAssembly>
++        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
++        <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.0.0" />
++      </dependentAssembly>
++      <dependentAssembly>
++        <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
++        <bindingRedirect oldVersion="0.0.0.0-4.0.2.1" newVersion="4.0.2.1" />
++      </dependentAssembly>
++    </assemblyBinding>
++  </runtime>
+ </configuration>
+diff --git a/E2EDotNet.Tests/Controllers/HomeControllerTest.cs b/E2EDotNet.Tests/Controllers/HomeControllerTest.cs
+index 0f1cfe5..385eecd 100644
+--- a/E2EDotNet.Tests/Controllers/HomeControllerTest.cs
++++ b/E2EDotNet.Tests/Controllers/HomeControllerTest.cs
+@@ -24,31 +24,6 @@ namespace E2EDotNet.Tests.Controllers
+             // Assert
+             Assert.IsNotNull(result);
+         }
+-
+-        [TestMethod]
+-        public void About()
+-        {
+-            // Arrange
+-            HomeController controller = new HomeController();
+-
+-            // Act
+-            ViewResult result = controller.About() as ViewResult;
+-
+-            // Assert
+-            Assert.AreEqual("Your application description page.", result.ViewBag.Message);
+-        }
+-
+-        [TestMethod]
+-        public void Contact()
+-        {
+-            // Arrange
+-            HomeController controller = new HomeController();
+-
+-            // Act
+-            ViewResult result = controller.Contact() as ViewResult;
+-
+-            // Assert
+-            Assert.IsNotNull(result);
+-        }
++        
+     }
+ }
+diff --git a/E2EDotNet.Tests/E2EDotNet.Tests.csproj b/E2EDotNet.Tests/E2EDotNet.Tests.csproj
+index d2a8cf9..5512c56 100644
+--- a/E2EDotNet.Tests/E2EDotNet.Tests.csproj
++++ b/E2EDotNet.Tests/E2EDotNet.Tests.csproj
+@@ -34,7 +34,19 @@
+     <ErrorReport>prompt</ErrorReport>
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release E2E|AnyCPU'">
++    <OutputPath>bin\Release E2E\</OutputPath>
++    <DefineConstants>TRACE</DefineConstants>
++    <Optimize>true</Optimize>
++    <DebugType>pdbonly</DebugType>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <ErrorReport>prompt</ErrorReport>
++    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
++  </PropertyGroup>
+   <ItemGroup>
++    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
++      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
++    </Reference>
+     <Reference Include="Microsoft.CSharp" />
+     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework">
+       <HintPath>..\packages\MSTest.TestFramework.1.2.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
+@@ -42,11 +54,20 @@
+     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions">
+       <HintPath>..\packages\MSTest.TestFramework.1.2.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
+     </Reference>
++    <Reference Include="Moq, Version=4.9.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
++      <HintPath>..\packages\Moq.4.9.0\lib\net45\Moq.dll</HintPath>
++    </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.ComponentModel.DataAnnotations" />
+     <Reference Include="System.Configuration" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Data" />
++    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
++      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
++    </Reference>
++    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
++      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
++    </Reference>
+     <Reference Include="System.Web" />
+     <Reference Include="System.Web.ApplicationServices" />
+     <Reference Include="System.Web.Extensions" />
+@@ -91,6 +112,7 @@
+   <ItemGroup>
+     <Compile Include="Properties\AssemblyInfo.cs" />
+     <Compile Include="Controllers\HomeControllerTest.cs" />
++    <Compile Include="TestRunnerTests.cs" />
+   </ItemGroup>
+   <ItemGroup>
+     <Content Include="App.config" />
+@@ -103,6 +125,10 @@
+       <Project>{98DBB283-2D24-489B-B6F0-B34900D74269}</Project>
+       <Name>E2EDotNet</Name>
+     </ProjectReference>
++    <ProjectReference Include="..\E2ETestRunner\E2ETestRunner.csproj">
++      <Project>{6ad3617c-e9c2-4a26-a389-0c69191dfc20}</Project>
++      <Name>E2ETestRunner</Name>
++    </ProjectReference>
+   </ItemGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+diff --git a/E2EDotNet.Tests/TestRunnerTests.cs b/E2EDotNet.Tests/TestRunnerTests.cs
+new file mode 100644
+index 0000000..6921e9d
+--- /dev/null
++++ b/E2EDotNet.Tests/TestRunnerTests.cs
+@@ -0,0 +1,70 @@
++﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
++using E2ETestRunner;
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++using Moq;
++namespace E2ETestRunner.Tests
++{
++    [TestSuite("Sample test suite")]
++    public class SampleTestSuite
++    {
++        [Test("Passing test",Description ="Test passes")]
++        public void PassingTest(TestRunner runner)
++        {
++
++        }
++        [Test("Failing test")]
++        public void FailingTest(TestRunner runner)
++        {
++            throw new Exception("test message");
++        }
++        [Test("Assertion failure test")]
++        public void AssertionFailure(TestRunner runner)
++        {
++            throw new AssertionFailure("test");
++        }
++
++
++    }
++    [TestClass()]
++    public class TestRunnerTests
++    {
++        public class TestTestRunner:TestRunner
++        {
++            public TestTestRunner():base(null)
++            {
++
++            }
++        }
++        [TestMethod()]
++        public void RunTest()
++        {
++            //arrange
++            var runner = new TestTestRunner();
++            var testSuites = TestRunner.GetSuitesForAssembly(typeof(TestRunnerTests).Assembly);
++            var tests = testSuites.SelectMany(m => m.Tests).ToList();
++            Dictionary<Test, AssertionFailure> results = new Dictionary<Test, AssertionFailure>();
++            //act
++            runner.onTestComplete += (test, err) => {
++                results[test] = err;
++            };
++            runner.Run(tests);
++            //assert
++            Assert.AreEqual(testSuites.First().Name, "Sample test suite");
++            Assert.AreEqual(tests[0].Name, "Passing test");
++            Assert.AreEqual(tests[0].Description, "Test passes");
++            Assert.AreEqual(results[tests[0]], null);
++            Assert.IsInstanceOfType(results[tests[1]].InnerException,typeof(Exception));
++            Assert.AreEqual(results[tests[1]].Message, "test message");
++            Assert.AreEqual(results[tests[2]].Message, "test");
++            Assert.AreEqual(results[tests[2]].InnerException, null);
++            Assert.AreEqual(tests[1].Name, "Failing test");
++            Assert.AreEqual(tests[1].Description, null);
++            Assert.AreEqual(tests[2].Name, "Assertion failure test");
++            Assert.AreEqual(tests[2].Description, null);
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/E2EDotNet.Tests/packages.config b/E2EDotNet.Tests/packages.config
+index e65a9cd..3c1d75c 100644
+--- a/E2EDotNet.Tests/packages.config
++++ b/E2EDotNet.Tests/packages.config
+@@ -1,10 +1,14 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ <packages>
++  <package id="Castle.Core" version="4.3.1" targetFramework="net461" />
+   <package id="Microsoft.AspNet.Mvc" version="5.2.4" targetFramework="net461" />
+   <package id="Microsoft.AspNet.Razor" version="3.2.4" targetFramework="net461" />
+   <package id="Microsoft.AspNet.WebPages" version="3.2.4" targetFramework="net461" />
+   <package id="Microsoft.Web.Infrastructure" version="1.0.0.0" targetFramework="net461" />
++  <package id="Moq" version="4.9.0" targetFramework="net461" />
+   <package id="MSTest.TestAdapter" version="1.2.0" targetFramework="net461" />
+   <package id="MSTest.TestFramework" version="1.2.0" targetFramework="net461" />
+   <package id="Newtonsoft.Json" version="11.0.1" targetFramework="net461" />
++  <package id="System.Threading.Tasks.Extensions" version="4.3.0" targetFramework="net461" />
++  <package id="System.ValueTuple" version="4.4.0" targetFramework="net461" />
+ </packages>
+\ No newline at end of file
+diff --git a/E2EDotNet.sln b/E2EDotNet.sln
+index a4d03d3..87d78d8 100644
+--- a/E2EDotNet.sln
++++ b/E2EDotNet.sln
+@@ -7,20 +7,41 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2EDotNet", "E2EDotNet\E2ED
+ EndProject
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2EDotNet.Tests", "E2EDotNet.Tests\E2EDotNet.Tests.csproj", "{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}"
+ EndProject
++Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2ETestRunner", "E2ETestRunner\E2ETestRunner.csproj", "{6AD3617C-E9C2-4A26-A389-0C69191DFC20}"
++EndProject
++Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostBuild", "PostBuild\PostBuild.csproj", "{CB8100FA-C323-4772-9980-30925294EB24}"
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Any CPU = Debug|Any CPU
++		Release E2E|Any CPU = Release E2E|Any CPU
+ 		Release|Any CPU = Release|Any CPU
+ 	EndGlobalSection
+ 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+ 		{98DBB283-2D24-489B-B6F0-B34900D74269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+ 		{98DBB283-2D24-489B-B6F0-B34900D74269}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{98DBB283-2D24-489B-B6F0-B34900D74269}.Release E2E|Any CPU.ActiveCfg = Release E2E|Any CPU
++		{98DBB283-2D24-489B-B6F0-B34900D74269}.Release E2E|Any CPU.Build.0 = Release E2E|Any CPU
+ 		{98DBB283-2D24-489B-B6F0-B34900D74269}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{98DBB283-2D24-489B-B6F0-B34900D74269}.Release|Any CPU.Build.0 = Release|Any CPU
+ 		{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+ 		{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}.Release E2E|Any CPU.ActiveCfg = Release E2E|Any CPU
++		{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}.Release E2E|Any CPU.Build.0 = Release E2E|Any CPU
+ 		{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{6E06C32E-143C-4DE4-91AC-F1F87D9C3C38}.Release|Any CPU.Build.0 = Release|Any CPU
++		{6AD3617C-E9C2-4A26-A389-0C69191DFC20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
++		{6AD3617C-E9C2-4A26-A389-0C69191DFC20}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{6AD3617C-E9C2-4A26-A389-0C69191DFC20}.Release E2E|Any CPU.ActiveCfg = Release E2E|Any CPU
++		{6AD3617C-E9C2-4A26-A389-0C69191DFC20}.Release E2E|Any CPU.Build.0 = Release E2E|Any CPU
++		{6AD3617C-E9C2-4A26-A389-0C69191DFC20}.Release|Any CPU.ActiveCfg = Release|Any CPU
++		{6AD3617C-E9C2-4A26-A389-0C69191DFC20}.Release|Any CPU.Build.0 = Release|Any CPU
++		{CB8100FA-C323-4772-9980-30925294EB24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
++		{CB8100FA-C323-4772-9980-30925294EB24}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{CB8100FA-C323-4772-9980-30925294EB24}.Release E2E|Any CPU.ActiveCfg = Release|Any CPU
++		{CB8100FA-C323-4772-9980-30925294EB24}.Release E2E|Any CPU.Build.0 = Release|Any CPU
++		{CB8100FA-C323-4772-9980-30925294EB24}.Release|Any CPU.ActiveCfg = Release|Any CPU
++		{CB8100FA-C323-4772-9980-30925294EB24}.Release|Any CPU.Build.0 = Release|Any CPU
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+diff --git a/E2EDotNet/Controllers/HomeController.cs b/E2EDotNet/Controllers/HomeController.cs
+index c22fc82..2f6de8e 100644
+--- a/E2EDotNet/Controllers/HomeController.cs
++++ b/E2EDotNet/Controllers/HomeController.cs
+@@ -1,30 +1,154 @@
+-﻿using System;
++﻿#if DEBUG || E2E
++using System;
++using System.IO;
+ using System.Collections.Generic;
+ using System.Linq;
+ using System.Web;
+ using System.Web.Mvc;
+-
++using E2ETestRunner;
++using Newtonsoft.Json;
++using E2EDotNet.Models;
++using System.Threading.Tasks;
+ namespace E2EDotNet.Controllers
+ {
+     public class HomeController : Controller
+     {
+-        public ActionResult Index()
++        static TestRunner ActiveRunner; //Active E2E test runner
++        static List<TaskCompletionSource<Tuple<Test, AssertionFailure>>> listeners = new List<TaskCompletionSource<Tuple<Test, AssertionFailure>>>();
++        static E2EScreen screenState = new E2EScreen();
++        static int completionCount = 0;
++        dynamic JSON
+         {
+-            return View();
++            get
++            {
++                using (StreamReader mreader = new StreamReader(Request.InputStream))
++                {
++                    return JsonConvert.DeserializeObject(mreader.ReadToEnd());
++                }
++            }
+         }
++        // GET: E2E
++        public ActionResult Index()
++        {
+ 
+-        public ActionResult About()
++            return View(screenState);
++        }
++        static System.Threading.Thread testThread;
++        [HttpPost]
++        public async Task<ActionResult> PerformAction()
+         {
+-            ViewBag.Message = "Your application description page.";
++            dynamic cmd = JSON;
++            switch ((int)cmd.op)
++            {
++                case 0:
++                    {
++                        //Run tests
++                        try
++                        {
++                            testThread = System.Threading.Thread.CurrentThread;
++                            switch ((int)cmd.browser)
++                            {
++                                case 0:
++                                    ActiveRunner = new ChromeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
++                                    break;
++                                case 1:
++                                    ActiveRunner = new FirefoxTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
++                                    break;
++                                case 2:
++                                    ActiveRunner = new IETestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
++                                    break;
++                                case 3:
++                                    ActiveRunner = new IETestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port,true);
++                                    break;
++                                case 4:
++                                    ActiveRunner = new RemoteRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port, cmd.host.ToString());
++                                    break;
++                                default:
++                                    return Content("Invalid browser ID");
++                            }
++                            screenState.SelectedTests = (cmd.tests as Newtonsoft.Json.Linq.JArray).Select(m => screenState.Tests[(int)m]).ToList();
++                            screenState.IsRunning = true;
++                            ActiveRunner.onTestComplete += ActiveRunner_onTestComplete;
++                            completionCount = 0;
++                            ActiveRunner.Run(screenState.SelectedTests.Select(m => m.Test));
++                        }catch(System.Threading.ThreadAbortException er)
++                        {
++                            System.Threading.Thread.ResetAbort();
++                        }
+ 
+-            return View();
++                        testThread = null;
++                        screenState.IsRunning = false;
++                        ActiveRunner?.Dispose();
++                        ActiveRunner = null;
++                        NotifyListeners(null, null);
++                        return Content("Complete");
++                    }
++                case 1:
++                    {
++                        testThread.Abort();
++                        return Json("OK");
++                    }
++                case 2:
++                    {
++                        //Long poll for results
++                        TaskCompletionSource<Tuple<Test, AssertionFailure>> src = new TaskCompletionSource<Tuple<Test, AssertionFailure>>();
++                        lock (listeners)
++                        {
++                            listeners.Add(src);
++                        }
++                        var res = await src.Task;
++                        if (res.Item1 == null)
++                        {
++                            return Json(new { op = 0 }); //All tests have finished executing
++                        }
++                        var test = res.Item1.UserData as E2ETest;
++                        return Json(new { op = 1, id = test.ID }); //One test has finished executing.
++
++                    }
++                case 3:
++                    {
++                        //Get test information starting at ID
++                        int startId = (int)cmd.id;
++                        List<object> testData = new List<object>();
++                        for (int i = startId; i < screenState.Tests.Count; i++)
++                        {
++                            var test = screenState.Tests[i];
++                            if (!test.IsCompleted)
++                            {
++                                break;
++                            }
++                            testData.Add(new { completed = true, errorMessage = test.ErrorMessage, id=test.ID });
++                        }
++                        return Json(new { testCount = screenState.SelectedTests.Count, completed = completionCount , list = testData });
++                    }
++                default:
++                    return Content("Bad request");
++            }
+         }
+ 
+-        public ActionResult Contact()
++        private void ActiveRunner_onTestComplete(Test test, AssertionFailure failure)
+         {
+-            ViewBag.Message = "Your contact page.";
++            var e2etest = test.UserData as E2ETest;
++            e2etest.IsCompleted = true;
++            completionCount++;
++            e2etest.ErrorMessage = failure?.ToString();
++            NotifyListeners(test, failure);
++        }
+ 
+-            return View();
++        private static void NotifyListeners(Test test, AssertionFailure failure)
++        {
++            List<TaskCompletionSource<Tuple<Test, AssertionFailure>>> list = null;
++            lock (listeners)
++            {
++                list = listeners.ToList();
++                listeners.Clear();
++            }
++            foreach (var listener in list)
++            {
++                listener.SetResult(new Tuple<Test, AssertionFailure>(test, failure));
++            }
+         }
+     }
+-}
+\ No newline at end of file
++}
++
++#endif
+\ No newline at end of file
+diff --git a/E2EDotNet/E2EDotNet.csproj b/E2EDotNet/E2EDotNet.csproj
+index fb2733f..28b0f1b 100644
+--- a/E2EDotNet/E2EDotNet.csproj
++++ b/E2EDotNet/E2EDotNet.csproj
+@@ -151,6 +151,7 @@
+     <Compile Include="Global.asax.cs">
+       <DependentUpon>Global.asax</DependentUpon>
+     </Compile>
++    <Compile Include="Models\E2EModel.cs" />
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+@@ -167,6 +168,7 @@
+     <Content Include="ApplicationInsights.config">
+       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+     </Content>
++    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+     <Content Include="Scripts\jquery-3.3.1.js" />
+     <Content Include="Scripts\jquery-3.3.1.min.js" />
+@@ -178,6 +180,7 @@
+     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+     <Content Include="Scripts\modernizr-2.8.3.js" />
++    <Content Include="Test.html" />
+     <Content Include="Web.config" />
+     <Content Include="Web.Debug.config">
+       <DependentUpon>Web.config</DependentUpon>
+@@ -195,7 +198,7 @@
+   </ItemGroup>
+   <ItemGroup>
+     <Folder Include="App_Data\" />
+-    <Folder Include="Models\" />
++    <Folder Include="bin\" />
+   </ItemGroup>
+   <ItemGroup>
+     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+@@ -210,10 +213,30 @@
+     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+     <Content Include="Scripts\jquery-3.3.1.min.map" />
+   </ItemGroup>
++  <ItemGroup>
++    <ProjectReference Include="..\E2ETestRunner\E2ETestRunner.csproj">
++      <Project>{6ad3617c-e9c2-4a26-a389-0c69191dfc20}</Project>
++      <Name>E2ETestRunner</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\PostBuild\PostBuild.csproj">
++      <Project>{cb8100fa-c323-4772-9980-30925294eb24}</Project>
++      <Name>PostBuild</Name>
++    </ProjectReference>
++  </ItemGroup>
+   <PropertyGroup>
+     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release E2E|AnyCPU'">
++    <DebugSymbols>true</DebugSymbols>
++    <OutputPath>bin\</OutputPath>
++    <DefineConstants>TRACE;E2E</DefineConstants>
++    <Optimize>true</Optimize>
++    <DebugType>pdbonly</DebugType>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <ErrorReport>prompt</ErrorReport>
++    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
++  </PropertyGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+@@ -243,7 +266,13 @@
+       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+     </PropertyGroup>
+     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
++    <Error Condition="!Exists('..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets'))" />
+   </Target>
++  <PropertyGroup>
++    <PostBuildEvent>PostBuild.exe "$(ConfigurationName)"
++del PostBuild.exe</PostBuildEvent>
++  </PropertyGroup>
++  <Import Project="..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets" Condition="Exists('..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets')" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+        Other similar extension points exist, see Microsoft.Common.targets.
+   <Target Name="BeforeBuild">
+diff --git a/E2EDotNet/Models/E2EModel.cs b/E2EDotNet/Models/E2EModel.cs
+new file mode 100644
+index 0000000..9441ef4
+--- /dev/null
++++ b/E2EDotNet/Models/E2EModel.cs
+@@ -0,0 +1,37 @@
++﻿#if DEBUG || E2E
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Web;
++using E2ETestRunner;
++namespace E2EDotNet.Models
++{
++    public class E2ETest
++    {
++        public bool IsCompleted { get; set; }
++        public string Name { get; set; }
++        public TestSuite TestSuite { get; set; }
++        public string Description { get; set; }
++        public string ErrorMessage { get; set; }
++        public int ID { get; set; }
++        public Test Test { get; set; }
++        public E2ETest SetUserData()
++        {
++            Test.UserData = this;
++            return this;
++        }
++    }
++    public class E2EScreen
++    {
++        public List<E2ETest> Tests;
++        public List<E2ETest> SelectedTests;
++        public bool IsRunning = false;
++        public E2EScreen()
++        {
++            int eger = 0;
++            Tests = TestRunner.TestSuites.SelectMany(m => m.Tests.Select(a => new { Suite = m, Test = a })).Select(m => new E2ETest() { TestSuite = m.Suite, Name = m.Test.Name, Description = m.Test.Description, ID = eger++, Test = m.Test }.SetUserData()).ToList();
++            SelectedTests = new List<E2ETest>();
++        }
++    }
++}
++#endif
+\ No newline at end of file
+diff --git a/E2EDotNet/Properties/PublishProfiles/FolderProfile.pubxml b/E2EDotNet/Properties/PublishProfiles/FolderProfile.pubxml
+new file mode 100644
+index 0000000..f6c7982
+--- /dev/null
++++ b/E2EDotNet/Properties/PublishProfiles/FolderProfile.pubxml
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++This file is used by the publish/package process of your Web project. You can customize the behavior of this process
++by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
++-->
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <PropertyGroup>
++    <WebPublishMethod>FileSystem</WebPublishMethod>
++    <PublishProvider>FileSystem</PublishProvider>
++    <LastUsedBuildConfiguration>Release E2E</LastUsedBuildConfiguration>
++    <LastUsedPlatform>Any CPU</LastUsedPlatform>
++    <SiteUrlToLaunchAfterPublish />
++    <LaunchSiteAfterPublish>True</LaunchSiteAfterPublish>
++    <ExcludeApp_Data>False</ExcludeApp_Data>
++    <publishUrl>C:\Users\bbosak\Desktop\publish</publishUrl>
++    <DeleteExistingFiles>False</DeleteExistingFiles>
++  </PropertyGroup>
++</Project>
+\ No newline at end of file
+diff --git a/E2EDotNet/Test.html b/E2EDotNet/Test.html
+new file mode 100644
+index 0000000..81e2bd0
+--- /dev/null
++++ b/E2EDotNet/Test.html
+@@ -0,0 +1,18 @@
++﻿<!DOCTYPE html>
++<html>
++<head>
++    <meta charset="utf-8" />
++    <title>Test page</title>
++</head>
++<body>
++    <script type="text/javascript">
++        function makeUserClickButton(callBach) {
++            var btn = document.createElement('input');
++            btn.type = 'button';
++            btn.value = 'Click me to complete the test';
++            document.body.appendChild(btn);
++            btn.onclick = callBach;
++        }
++    </script>
++</body>
++</html>
+\ No newline at end of file
+diff --git a/E2EDotNet/Views/Home/Index.cshtml b/E2EDotNet/Views/Home/Index.cshtml
+index 32e1dd9..9233b02 100644
+--- a/E2EDotNet/Views/Home/Index.cshtml
++++ b/E2EDotNet/Views/Home/Index.cshtml
+@@ -1,31 +1,173 @@
+-﻿@{
+-    ViewBag.Title = "Home Page";
++﻿@model E2EDotNet.Models.E2EScreen
++
++@{
++    ViewBag.Title = "Index";
++    Layout = "~/Views/Shared/_Layout.cshtml";
++}
++
++<h2>E2E Test Runner</h2>
++
++
++<table class="table" id="testTable">
++    <tr>
++
++        <th>
++            Test name
++        </th>
++        <th>
++            Status
++        </th>
++        <th>
++            Test description
++        </th>
++        <th>Enabled</th>
++        <th></th>
++    </tr>
++    @foreach (var test in Model.Tests)
++    {
++    <tr id="test_@test.ID">
++        <td>@test.Name</td>
++        <td id="test_status_@test.ID">
++            @if (test.IsCompleted)
++            {
++                if (test.ErrorMessage != null)
++                {
++                    <span style="color:red;">Error:<br /><pre style="background-color:gray;color:black;">@test.ErrorMessage</pre></span>
++                }
++                else
++                {
++                    <span style="color:green">Completed</span>
++                }
++            }
++            else
++            {
++                <span>Not Completed</span>
++            }
++        </td>
++        <td>@test.Description</td>
++        <td><input type="checkbox" checked="checked" /></td>
++    </tr>
+ }
++</table>
+ 
+-<div class="jumbotron">
+-    <h1>ASP.NET</h1>
+-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
++<div id="highLevelStatus">
++    @if (Model.IsRunning)
++    {
++        <span>Completed @Model.SelectedTests.Where(m => m.IsCompleted).Count() of @Model.SelectedTests.Count</span>
++    }
++    else
++    {
++        <span>No tests are running.</span>
++    }
+ </div>
++<select id="browserSelection">
++    <option value="0">Chrome</option>
++    <option value="4">Remote browser via Selenium wire protocol</option>
++</select>
++<input type="text" id="remoteHost" style="display:none" />
++<input type="button" value="Start tests" id="startStopBtn" />
+ 
+-<div class="row">
+-    <div class="col-md-4">
+-        <h2>Getting started</h2>
+-        <p>
+-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+-            enables a clean separation of concerns and gives you full control over markup
+-            for enjoyable, agile development.
+-        </p>
+-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+-    </div>
+-    <div class="col-md-4">
+-        <h2>Get more libraries</h2>
+-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+-    </div>
+-    <div class="col-md-4">
+-        <h2>Web Hosting</h2>
+-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+-    </div>
+-</div>
+\ No newline at end of file
++@section scripts {
++    <script type="text/javascript">
++        $(document).ready(function () {
++            var browserSelection = document.getElementById('browserSelection');
++            var remoteHost = document.getElementById('remoteHost');
++            var enabledTests = {};
++            browserSelection.onchange = function () {
++                if (browserSelection.value == '4') {
++                    remoteHost.style.display = '';
++                } else {
++                    remoteHost.style.display = 'none';
++                }
++            };
++            var isRunning = @(Model.IsRunning ? "true" : "false");
++            var testCount = @Model.SelectedTests.Count;
++            var startStopBtn = document.getElementById('startStopBtn');
++            var firstTest = document.getElementById('test_0');
++            var i = 0;
++            for (var test = firstTest; test != null; test = test.nextSibling) {
++                if (test.nodeType == Node.ELEMENT_NODE) {
++                    test.testInfo = { id: i, enableCheckbox: test.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.firstChild }; //Would be nice if IE supported nextElementSibling
++                    i++;
++                }
++            }
++            var highLevelStatus = document.getElementById('highLevelStatus');
++            var lastUpdatedID = 0;
++            var doLongPoll = function () {
++                $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 2 })).done(function (data) {
++                    
++                    if (data.op == 0) {
++                        //All tests complete
++                        highLevelStatus.innerText = 'No tests are running.';
++                        isRunning = false;
++                        startStopBtn.value = 'Start tests';
++                        doLongPoll();
++                        return;
++                    }
++                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 3, id: lastUpdatedID }), function (data) {
++                        var completed = data.completed;
++                        testCount = data.testCount;
++                        var list = data.list;
++                        for (var i = 0; i < list.length; i++) {
++                            var test = list[i];
++                            if (test.completed) {
++                                var elem = document.getElementById('test_status_' + test.id);
++                                elem.innerHTML = '';
++                                if (test.errorMessage) {
++                                    elem.style.color = 'red';
++                                    var span = document.createElement('span');
++                                    span.innerText = 'Error:';
++                                    elem.appendChild(span);
++                                    var pre = document.createElement('pre');
++                                    pre.style.backgroundColor = 'gray';
++                                    pre.innerText = test.errorMessage;
++                                    elem.appendChild(pre);
++                                } else {
++                                    elem.style.color = 'green';
++                                    var span = document.createElement('span');
++                                    span.innerText = 'Completed';
++                                    elem.appendChild(span);
++                                }
++                                if (test.id > lastUpdatedID) {
++                                    lastUpdatedID = test.id;
++                                }
++                            }
++                            
++                            if (testCount) {
++                                highLevelStatus.innerText = 'Completed ' + completed + ' of ' + testCount;
++                            }
++                        }
++                    });
++                    doLongPoll();
++                }).catch(function () {
++                    doLongPoll();
++                });
++            };
++            doLongPoll();
++            startStopBtn.onclick = function () {
++                if (isRunning) {
++                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 1 }));
++                    startStopBtn.value = 'Start tests';
++                    isRunning = false;
++                } else {
++                    var tests = [];
++                    enabledTests = {};
++                    lastUpdatedID = 0;
++                    for (var test = firstTest; test != null; test = test.nextSibling) {
++                        if (test.nodeType == Node.ELEMENT_NODE) {
++                            if (test.testInfo.enableCheckbox.checked) {
++                                tests.push(test.testInfo.id);
++                                enabledTests[test.testInfo.id] = true;
++                            }
++                        }
++                    }
++                    testCount = tests.length;
++                    highLevelStatus.innerText = 'Completed 0 of ' + testCount;
++                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 0, tests: tests, browser: browserSelection.value | 0, host: remoteHost.value }));
++                    startStopBtn.value = 'Stop tests';
++                    isRunning = true;
++                }
++            };
++        });
++    </script>
++}
+\ No newline at end of file
+diff --git a/E2EDotNet/Web.config b/E2EDotNet/Web.config
+index 900ff31..4b81569 100644
+--- a/E2EDotNet/Web.config
++++ b/E2EDotNet/Web.config
+@@ -5,74 +5,67 @@
+   -->
+ <configuration>
+   <appSettings>
+-    <add key="webpages:Version" value="3.0.0.0"/>
+-    <add key="webpages:Enabled" value="false"/>
+-    <add key="ClientValidationEnabled" value="true"/>
+-    <add key="UnobtrusiveJavaScriptEnabled" value="true"/>
++    <add key="webpages:Version" value="3.0.0.0" />
++    <add key="webpages:Enabled" value="false" />
++    <add key="ClientValidationEnabled" value="true" />
++    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+   </appSettings>
+   <system.web>
+-    <compilation debug="true" targetFramework="4.6.1"/>
+-    <httpRuntime targetFramework="4.6.1"/>
++    <compilation debug="true" targetFramework="4.6.1" />
++    <httpRuntime targetFramework="4.6.1" />
+     <httpModules>
+-      <add name="ApplicationInsightsWebTracking" type="Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule, Microsoft.AI.Web"/>
++      <add name="ApplicationInsightsWebTracking" type="Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule, Microsoft.AI.Web" />
+     </httpModules>
+   </system.web>
+   <runtime>
+     <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+       <dependentAssembly>
+-        <assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f"/>
+-        <bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2"/>
++        <assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f" />
++        <bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2" />
+       </dependentAssembly>
+       <dependentAssembly>
+-        <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51"/>
+-        <bindingRedirect oldVersion="0.0.0.0-4.0.2.1" newVersion="4.0.2.1"/>
++        <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51" />
++        <bindingRedirect oldVersion="0.0.0.0-4.0.2.1" newVersion="4.0.2.1" />
+       </dependentAssembly>      
+       <dependentAssembly>
+-        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed"/>
+-        <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.0.0"/>
++        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" />
++        <bindingRedirect oldVersion="0.0.0.0-11.0.0.0" newVersion="11.0.0.0" />
+       </dependentAssembly>
+       <dependentAssembly>
+-        <assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35"/>
+-        <bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0"/>
++        <assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35" />
++        <bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0" />
+       </dependentAssembly>
+       <dependentAssembly>
+-        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35"/>
+-        <bindingRedirect oldVersion="1.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930"/>
++        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
++        <bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
+       </dependentAssembly>
+       <dependentAssembly>
+-        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35"/>
+-        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0"/>
++        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
++        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+       </dependentAssembly>
+       <dependentAssembly>
+-        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35"/>
+-        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0"/>
++        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
++        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+       </dependentAssembly>
+       <dependentAssembly>
+-        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35"/>
+-        <bindingRedirect oldVersion="1.0.0.0-5.2.4.0" newVersion="5.2.4.0"/>
++        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
++        <bindingRedirect oldVersion="1.0.0.0-5.2.4.0" newVersion="5.2.4.0" />
+       </dependentAssembly>
+     </assemblyBinding>
+   </runtime>
+   <system.webServer>
+     <modules>
+-      <remove name="TelemetryCorrelationHttpModule"/>
+-      <add name="TelemetryCorrelationHttpModule"
+-        type="Microsoft.AspNet.TelemetryCorrelation.TelemetryCorrelationHttpModule, Microsoft.AspNet.TelemetryCorrelation"
+-        preCondition="integratedMode,managedHandler"/>
+-      <remove name="ApplicationInsightsWebTracking"/>
+-      <add name="ApplicationInsightsWebTracking" type="Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule, Microsoft.AI.Web"
+-        preCondition="managedHandler"/>
++      <remove name="TelemetryCorrelationHttpModule" />
++      <add name="TelemetryCorrelationHttpModule" type="Microsoft.AspNet.TelemetryCorrelation.TelemetryCorrelationHttpModule, Microsoft.AspNet.TelemetryCorrelation" preCondition="integratedMode,managedHandler" />
++      <remove name="ApplicationInsightsWebTracking" />
++      <add name="ApplicationInsightsWebTracking" type="Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule, Microsoft.AI.Web" preCondition="managedHandler" />
+     </modules>
+-    <validation validateIntegratedModeConfiguration="false"/>
++    <validation validateIntegratedModeConfiguration="false" />
+   </system.webServer>
+   <system.codedom>
+     <compilers>
+-      <compiler language="c#;cs;csharp" extension=".cs"
+-        type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider, Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+-        warningLevel="4" compilerOptions="/langversion:default /nowarn:1659;1699;1701"/>
+-      <compiler language="vb;vbs;visualbasic;vbscript" extension=".vb"
+-        type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.VBCodeProvider, Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+-        warningLevel="4" compilerOptions="/langversion:default /nowarn:41008 /define:_MYTYPE=\&quot;Web\&quot; /optionInfer+"/>
++      <compiler language="c#;cs;csharp" extension=".cs" type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider, Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" warningLevel="4" compilerOptions="/langversion:default /nowarn:1659;1699;1701" />
++      <compiler language="vb;vbs;visualbasic;vbscript" extension=".vb" type="Microsoft.CodeDom.Providers.DotNetCompilerPlatform.VBCodeProvider, Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" warningLevel="4" compilerOptions="/langversion:default /nowarn:41008 /define:_MYTYPE=\&quot;Web\&quot; /optionInfer+" />
+     </compilers>
+   </system.codedom>
+ </configuration>
+diff --git a/E2EDotNet/packages.config b/E2EDotNet/packages.config
+index ea6cdf4..b5cf6c8 100644
+--- a/E2EDotNet/packages.config
++++ b/E2EDotNet/packages.config
+@@ -21,6 +21,7 @@
+   <package id="Microsoft.Web.Infrastructure" version="1.0.0.0" targetFramework="net461" />
+   <package id="Modernizr" version="2.8.3" targetFramework="net461" />
+   <package id="Newtonsoft.Json" version="11.0.1" targetFramework="net461" />
++  <package id="Selenium.Chrome.WebDriver" version="2.40" targetFramework="net461" />
+   <package id="System.Diagnostics.DiagnosticSource" version="4.4.1" targetFramework="net461" />
+   <package id="WebGrease" version="1.6.0" targetFramework="net461" />
+ </packages>
+\ No newline at end of file
+diff --git a/E2ETestRunner/E2ETestRunner.csproj b/E2ETestRunner/E2ETestRunner.csproj
+new file mode 100644
+index 0000000..6507a55
+--- /dev/null
++++ b/E2ETestRunner/E2ETestRunner.csproj
+@@ -0,0 +1,78 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
++  <PropertyGroup>
++    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
++    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
++    <ProjectGuid>{6AD3617C-E9C2-4A26-A389-0C69191DFC20}</ProjectGuid>
++    <OutputType>Library</OutputType>
++    <AppDesignerFolder>Properties</AppDesignerFolder>
++    <RootNamespace>E2ETestRunner</RootNamespace>
++    <AssemblyName>E2ETestRunner</AssemblyName>
++    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
++    <FileAlignment>512</FileAlignment>
++    <NuGetPackageImportStamp>
++    </NuGetPackageImportStamp>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
++    <DebugSymbols>true</DebugSymbols>
++    <DebugType>full</DebugType>
++    <Optimize>false</Optimize>
++    <OutputPath>bin\Debug\</OutputPath>
++    <DefineConstants>DEBUG;TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
++    <DebugType>pdbonly</DebugType>
++    <Optimize>true</Optimize>
++    <OutputPath>bin\Release\</OutputPath>
++    <DefineConstants>TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release E2E|AnyCPU'">
++    <OutputPath>bin\Release E2E\</OutputPath>
++    <DefineConstants>TRACE;E2E</DefineConstants>
++    <Optimize>true</Optimize>
++    <DebugType>pdbonly</DebugType>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <ErrorReport>prompt</ErrorReport>
++    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
++    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
++  </PropertyGroup>
++  <ItemGroup>
++    <Reference Include="System" />
++    <Reference Include="System.Core" />
++    <Reference Include="System.Drawing" />
++    <Reference Include="System.Xml.Linq" />
++    <Reference Include="System.Data.DataSetExtensions" />
++    <Reference Include="Microsoft.CSharp" />
++    <Reference Include="System.Data" />
++    <Reference Include="System.Net.Http" />
++    <Reference Include="System.Xml" />
++    <Reference Include="WebDriver, Version=3.13.1.0, Culture=neutral, processorArchitecture=MSIL">
++      <HintPath>..\packages\Selenium.WebDriver.3.13.1\lib\net45\WebDriver.dll</HintPath>
++    </Reference>
++  </ItemGroup>
++  <ItemGroup>
++    <Compile Include="ExampleTests.cs" />
++    <Compile Include="TestRunner.cs" />
++    <Compile Include="Properties\AssemblyInfo.cs" />
++  </ItemGroup>
++  <ItemGroup>
++    <None Include="packages.config" />
++  </ItemGroup>
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
++  <Import Project="..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets" Condition="Exists('..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets')" />
++  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
++    <PropertyGroup>
++      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
++    </PropertyGroup>
++    <Error Condition="!Exists('..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets'))" />
++    <Error Condition="!Exists('..\packages\Selenium.Firefox.WebDriver.0.21.0\build\Selenium.Firefox.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Firefox.WebDriver.0.21.0\build\Selenium.Firefox.WebDriver.targets'))" />
++  </Target>
++  <Import Project="..\packages\Selenium.Firefox.WebDriver.0.21.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.21.0\build\Selenium.Firefox.WebDriver.targets')" />
++</Project>
+\ No newline at end of file
+diff --git a/E2ETestRunner/ExampleTests.cs b/E2ETestRunner/ExampleTests.cs
+new file mode 100644
+index 0000000..df6ff5b
+--- /dev/null
++++ b/E2ETestRunner/ExampleTests.cs
+@@ -0,0 +1,57 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++using OpenQA.Selenium;
++namespace E2ETestRunner
++{
++    [TestSuite("Login Screen",URL ="")]
++    public class ExampleTests
++    {
++        [Test("Demo passing test",Description ="Example of a test that passes")]
++        public void PassingTest(TestRunner runner)
++        {
++
++        }
++        [Test("Demo failing test",Description = "test fails due to an exception")]
++        public unsafe void FailingTest(TestRunner runner)
++        {
++            int* ptr = (int*)new IntPtr(0).ToPointer();
++            *ptr = 5; //SEGFAULT!
++        }
++        
++        [Test("Demo assertion failure", Description = "Test fails due to an assertion")]
++        public void AssertionFailure(TestRunner runner)
++        {
++            throw new AssertionFailure("5 should equal 3. Shouldn't it?");
++        }
++        [Test("Demo pseudorandom failure", Description = "Test fails depending on what time it is")]
++        public void SometimesFails(TestRunner runner)
++        {
++            if (new Random().Next(0, 5) > 2)
++            {
++                throw new AssertionFailure("The browser isn't feeling well today");
++            }
++        }
++        
++    }
++    [TestSuite("Generic tests",URL ="Test.html")]
++    public class GenericTests
++    {
++        [Test("User interaction test", Description = "Example of a test that requires user interaction")]
++        public void UserInteractionTest(TestRunner runner)
++        {
++            bool retval = (bool)runner.InjectScript("makeUserClickButton(function(){done(true);});", new object[0]);
++            if (!retval)
++            {
++                throw new AssertionFailure("Didn't get what we were expecting from the browser.");
++            }
++        }
++        [Test("Slow test", Description = "This test takes a while to complete")]
++        public void SlowTest(TestRunner runner)
++        {
++            System.Threading.Thread.Sleep(5000);
++        }
++    }
++}
+diff --git a/E2ETestRunner/Properties/AssemblyInfo.cs b/E2ETestRunner/Properties/AssemblyInfo.cs
+new file mode 100644
+index 0000000..38fd3c7
+--- /dev/null
++++ b/E2ETestRunner/Properties/AssemblyInfo.cs
+@@ -0,0 +1,37 @@
++﻿using System.Reflection;
++using System.Runtime.CompilerServices;
++using System.Runtime.InteropServices;
++
++// General Information about an assembly is controlled through the following
++// set of attributes. Change these attribute values to modify the information
++// associated with an assembly.
++[assembly: AssemblyTitle("E2ETestRunner")]
++[assembly: AssemblyDescription("")]
++[assembly: AssemblyConfiguration("")]
++[assembly: AssemblyCompany("")]
++[assembly: AssemblyProduct("E2ETestRunner")]
++[assembly: AssemblyCopyright("Copyright ©  2018")]
++[assembly: AssemblyTrademark("")]
++[assembly: AssemblyCulture("")]
++[assembly: InternalsVisibleTo("E2EDotNet.Tests")]
++
++// Setting ComVisible to false makes the types in this assembly not visible
++// to COM components.  If you need to access a type in this assembly from
++// COM, set the ComVisible attribute to true on that type.
++[assembly: ComVisible(false)]
++
++// The following GUID is for the ID of the typelib if this project is exposed to COM
++[assembly: Guid("6ad3617c-e9c2-4a26-a389-0c69191dfc20")]
++
++// Version information for an assembly consists of the following four values:
++//
++//      Major Version
++//      Minor Version
++//      Build Number
++//      Revision
++//
++// You can specify all the values or you can default the Build and Revision Numbers
++// by using the '*' as shown below:
++// [assembly: AssemblyVersion("1.0.*")]
++[assembly: AssemblyVersion("1.0.0.0")]
++[assembly: AssemblyFileVersion("1.0.0.0")]
+diff --git a/E2ETestRunner/TestRunner.cs b/E2ETestRunner/TestRunner.cs
+new file mode 100644
+index 0000000..47ef031
+--- /dev/null
++++ b/E2ETestRunner/TestRunner.cs
+@@ -0,0 +1,348 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Reflection;
++using System.Text;
++using System.Threading.Tasks;
++using OpenQA;
++using OpenQA.Selenium;
++using OpenQA.Selenium.Chrome;
++using OpenQA.Selenium.Edge;
++using OpenQA.Selenium.Firefox;
++using OpenQA.Selenium.IE;
++using OpenQA.Selenium.Remote;
++
++namespace E2ETestRunner
++{
++
++    /// <summary>
++    /// A test suite
++    /// </summary>
++    internal class TestSuiteAttribute:Attribute
++    {
++        /// <summary>
++        /// Optional URL for the test suite. If not specified, the URL which was previously loaded in the browser will stay.
++        /// </summary>
++        public string URL { get; set; }
++        /// <summary>
++        /// The human-readable name of the test suite (required)
++        /// </summary>
++        public string Name { get; set; }
++        public TestSuiteAttribute(string Name)
++        {
++            this.Name = Name;
++        }
++    }
++    /// <summary>
++    /// A test
++    /// </summary>
++    internal class TestAttribute:Attribute
++    {
++        /// <summary>
++        /// The name of the test
++        /// </summary>
++        public string Name { get; set; }
++        /// <summary>
++        /// An optional description of the test
++        /// </summary>
++        public string Description { get; set; }
++        public TestAttribute(string Name)
++        {
++            this.Name = Name;
++        }
++    }
++    /// <summary>
++    /// An assertion failure
++    /// </summary>
++    public class AssertionFailure:Exception
++    {
++        public AssertionFailure(string msg, Exception innerException = null):base(msg,innerException)
++        {
++        }
++    }
++    /// <summary>
++    /// A test runner that permits the execution of tests for a particular web browser
++    /// </summary>
++    public abstract class TestRunner:IDisposable
++    {
++        protected RemoteWebDriver driver;
++        string baseURL;
++        public static readonly IEnumerable<TestSuite> TestSuites = GetSuitesForAssembly(typeof(TestRunner).Assembly);
++        public static IEnumerable<TestSuite> GetSuitesForAssembly(Assembly assembly)
++        {
++            return assembly.GetTypes().Select(m => new { SuiteInfo = m.GetCustomAttributes(typeof(TestSuiteAttribute), false).FirstOrDefault() as TestSuiteAttribute, Class = m }).Where(m => m.SuiteInfo != null).Select(m => new { Suite = m, TestMethods = m.Class.GetMethods().Select(a => new { TestInfo = a.GetCustomAttributes(typeof(TestAttribute), false).FirstOrDefault() as TestAttribute, Method = a }).Where(a => a.TestInfo != null) }).Select(m => new TestSuite(m.TestMethods.Select(a => new Test(a.TestInfo.Name, a.TestInfo.Description, a.Method)), m.Suite.SuiteInfo.Name, m.Suite.Class, m.Suite.SuiteInfo.URL)).ToList();
++        }
++        internal TestRunner(string baseURL)
++        {
++            this.baseURL = baseURL;
++        }
++        public delegate void TestCompletionDelegate(Test test, AssertionFailure failure);
++        public event TestCompletionDelegate onTestComplete;
++        /// <summary>
++        /// Runs a series of tests
++        /// </summary>
++        /// <param name="tests">The tests to run</param>
++        public void Run(IEnumerable<Test> tests)
++        {
++            var grouping = tests.GroupBy(m => m.suite);
++            foreach (var testCase in grouping)
++            {
++                var caseInstance = testCase.Key.type.GetConstructor(new Type[0]).Invoke(new object[0]);
++                if(testCase.Key.URL != null)
++                {
++                    Navigate(testCase.Key.URL);
++                }
++                foreach (var test in testCase)
++                {
++                    try
++                    {
++                        test.method.Invoke(caseInstance, new object[] { this });
++                        onTestComplete?.Invoke(test, null);
++                    }
++                    catch (TargetInvocationException er)
++                    {
++                        var ex = er.InnerException;
++                        onTestComplete?.Invoke(test, ex as AssertionFailure ?? new AssertionFailure(ex.Message, ex));
++                    }
++                }
++
++            }
++        }
++        /// <summary>
++        /// Navigates to the specified URL relative to the root of the website
++        /// </summary>
++        /// <param name="url">The URL to navigate to</param>
++        internal void Navigate(string url)
++        {
++            driver.Navigate().GoToUrl(baseURL+"/"+url);
++            
++        }
++        /// <summary>
++        /// Injects JavaScript code into the page. Returns the object passed to the done function.
++        /// </summary>
++        /// <param name="text">The script to execute. MUST call done when finished.</param>
++        /// <param name="args">Arguments to pass to the JavaScript code. Must not be null.</param>
++        /// <returns></returns>
++        internal object InjectScript(string text, object[] args)
++        {
++            string txt = "var done = arguments["+args.Length+"];\n"+text;
++            return driver.ExecuteAsyncScript(txt, args);
++        }
++        /// <summary>
++        /// Finds DON elements matching the specified criteria
++        /// </summary>
++        /// <param name="bye">The criterion to match by</param>
++        /// <returns></returns>
++        internal IReadOnlyCollection<IWebElement> FindElements(By bye /*By(e) bye...*/)
++        {
++            return driver.FindElements(bye);
++        }
++        #region IDisposable Support
++        protected bool disposedValue = false; // To detect redundant calls
++
++        protected virtual void Dispose(bool disposing)
++        {
++            if (!disposedValue)
++            {
++                if (disposing)
++                {
++                    // TODO: dispose managed state (managed objects).
++                }
++
++                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
++                // TODO: set large fields to null.
++
++                disposedValue = true;
++            }
++        }
++        
++
++        // This code added to correctly implement the disposable pattern.
++        public void Dispose()
++        {
++            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
++            Dispose(true);
++            
++        }
++        #endregion
++    }
++
++    /// <summary>
++    /// Represents a test that can be ran
++    /// </summary>
++    public class Test
++    {
++        internal Test(string name, string description, MethodInfo method)
++        {
++            Name = name;
++            Description = description;
++            this.method = method;
++        }
++        public object UserData { get; set; }
++        internal MethodInfo method;
++        public string Name
++        {
++            get;
++        }
++        public string Description
++        {
++            get;
++        }
++        internal TestSuite suite;
++    }
++    /// <summary>
++    /// Represents a suite of tests
++    /// </summary>
++    public class TestSuite
++    {
++        internal TestSuite(IEnumerable<Test> tests, string name, Type type, string URL)
++        {
++            Tests = tests.ToList();
++            Name = name;
++            this.type = type;
++            foreach(var test in Tests)
++            {
++                test.suite = this;
++            }
++            this.URL = URL;
++        }
++        /// <summary>
++        /// The URL specified by the test suite, relative to the root of the website
++        /// </summary>
++        public string URL { get; }
++        /// <summary>
++        /// The name of the test suite
++        /// </summary>
++        public string Name { get; }
++        /// <summary>
++        /// The tests in the test suite
++        /// </summary>
++        public IEnumerable<Test> Tests { get; }
++        internal Type type;
++    }
++
++    /// <summary>
++    /// A test runner for Firefox.
++    /// </summary>
++    public class FirefoxTestRunner : TestRunner
++    {
++        FirefoxDriver firefox;
++        public FirefoxTestRunner(string baseURL) : base(baseURL)
++        {
++            firefox = new FirefoxDriver(new FirefoxOptions() {  UseLegacyImplementation = false, PageLoadStrategy = PageLoadStrategy.Normal });
++            driver = firefox;
++        }
++        protected override void Dispose(bool disposing)
++        {
++            if (!disposedValue)
++            {
++                try
++                {
++                    firefox.Close();
++                }
++                catch (Exception er)
++                {
++
++                }
++                firefox.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++    }
++
++    /// <summary>
++    /// A test runner for Internet Exploder
++    /// </summary>
++    public class IETestRunner : TestRunner
++    {
++        RemoteWebDriver exploder;
++        /// <summary>
++        /// Constructs a new Internet Exploder driver
++        /// </summary>
++        /// <param name="baseURL">The base URL to use</param>
++        /// <param name="windows10Version">Whether or not to use the Windows 10 version</param>
++        public IETestRunner(string baseURL, bool windows10Version = false) : base(baseURL)
++        {
++            if (windows10Version)
++            {
++                exploder = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
++            }
++            else
++            {
++                exploder = new InternetExplorerDriver(new InternetExplorerOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
++            }
++            driver = exploder;
++        }
++        protected override void Dispose(bool disposing)
++        {
++            if (!disposedValue)
++            {
++                try
++                {
++                    exploder.Close();
++                }
++                catch (Exception er)
++                {
++
++                }
++                exploder.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++    }
++
++    /// <summary>
++    /// A generic remote test runner
++    /// </summary>
++    public class RemoteRunner:TestRunner
++    {
++        public RemoteRunner(string baseURL, string remoteServer) : base(baseURL)
++        {
++            driver = new RemoteWebDriver(new Uri(remoteServer),new DesiredCapabilities());
++        }
++        protected override void Dispose(bool disposing)
++        {
++            if (!disposedValue)
++            {
++                try
++                {
++                    driver.Close();
++                }
++                catch (Exception er)
++                {
++
++                }
++                driver.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++    }
++
++    /// <summary>
++    /// A test runner for Chrome
++    /// </summary>
++    public class ChromeTestRunner : TestRunner
++    {
++        ChromeDriver chrome;
++        public ChromeTestRunner(string baseURL) : base(baseURL)
++        {
++            chrome = new ChromeDriver(new ChromeOptions() { UseSpecCompliantProtocol = true, PageLoadStrategy = PageLoadStrategy.Normal });
++            driver = chrome;
++        }
++        protected override void Dispose(bool disposing)
++        {
++            if(!disposedValue)
++            {
++                try
++                {
++                    chrome.Close();
++                }catch(Exception er)
++                {
++
++                }
++                chrome.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++    }
++}
+diff --git a/E2ETestRunner/packages.config b/E2ETestRunner/packages.config
+new file mode 100644
+index 0000000..358790c
+--- /dev/null
++++ b/E2ETestRunner/packages.config
+@@ -0,0 +1,6 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<packages>
++  <package id="Selenium.Chrome.WebDriver" version="2.40" targetFramework="net461" />
++  <package id="Selenium.Firefox.WebDriver" version="0.21.0" targetFramework="net461" />
++  <package id="Selenium.WebDriver" version="3.13.1" targetFramework="net461" />
++</packages>
+\ No newline at end of file
+diff --git a/PostBuild/App.config b/PostBuild/App.config
+new file mode 100644
+index 0000000..731f6de
+--- /dev/null
++++ b/PostBuild/App.config
+@@ -0,0 +1,6 @@
++﻿<?xml version="1.0" encoding="utf-8" ?>
++<configuration>
++    <startup> 
++        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
++    </startup>
++</configuration>
+\ No newline at end of file
+diff --git a/PostBuild/PostBuild.csproj b/PostBuild/PostBuild.csproj
+new file mode 100644
+index 0000000..a0ac843
+--- /dev/null
++++ b/PostBuild/PostBuild.csproj
+@@ -0,0 +1,52 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
++  <PropertyGroup>
++    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
++    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
++    <ProjectGuid>{CB8100FA-C323-4772-9980-30925294EB24}</ProjectGuid>
++    <OutputType>Exe</OutputType>
++    <RootNamespace>PostBuild</RootNamespace>
++    <AssemblyName>PostBuild</AssemblyName>
++    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
++    <FileAlignment>512</FileAlignment>
++    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <DebugSymbols>true</DebugSymbols>
++    <DebugType>full</DebugType>
++    <Optimize>false</Optimize>
++    <OutputPath>bin\Debug\</OutputPath>
++    <DefineConstants>DEBUG;TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <DebugType>pdbonly</DebugType>
++    <Optimize>true</Optimize>
++    <OutputPath>bin\Release\</OutputPath>
++    <DefineConstants>TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++  </PropertyGroup>
++  <ItemGroup>
++    <Reference Include="System" />
++    <Reference Include="System.Core" />
++    <Reference Include="System.Xml.Linq" />
++    <Reference Include="System.Data.DataSetExtensions" />
++    <Reference Include="Microsoft.CSharp" />
++    <Reference Include="System.Data" />
++    <Reference Include="System.Net.Http" />
++    <Reference Include="System.Xml" />
++  </ItemGroup>
++  <ItemGroup>
++    <Compile Include="Program.cs" />
++    <Compile Include="Properties\AssemblyInfo.cs" />
++  </ItemGroup>
++  <ItemGroup>
++    <None Include="App.config" />
++  </ItemGroup>
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
++</Project>
+\ No newline at end of file
+diff --git a/PostBuild/Program.cs b/PostBuild/Program.cs
+new file mode 100644
+index 0000000..fcdceaa
+--- /dev/null
++++ b/PostBuild/Program.cs
+@@ -0,0 +1,22 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++using System.IO;
++namespace PostBuild
++{
++    class Program
++    {
++        static void Main(string[] args)
++        {
++            if (args[0] == "Release")
++            {
++                File.Delete("E2ETestRunner.dll");
++                File.Delete("E2ETestRunner.pdb");
++                File.Delete("PostBuild.pdb");
++                File.Delete("PostBuild.exe.config");
++            }
++        }
++    }
++}
+diff --git a/PostBuild/Properties/AssemblyInfo.cs b/PostBuild/Properties/AssemblyInfo.cs
+new file mode 100644
+index 0000000..b1ab445
+--- /dev/null
++++ b/PostBuild/Properties/AssemblyInfo.cs
+@@ -0,0 +1,36 @@
++﻿using System.Reflection;
++using System.Runtime.CompilerServices;
++using System.Runtime.InteropServices;
++
++// General Information about an assembly is controlled through the following
++// set of attributes. Change these attribute values to modify the information
++// associated with an assembly.
++[assembly: AssemblyTitle("PostBuild")]
++[assembly: AssemblyDescription("")]
++[assembly: AssemblyConfiguration("")]
++[assembly: AssemblyCompany("")]
++[assembly: AssemblyProduct("PostBuild")]
++[assembly: AssemblyCopyright("Copyright ©  2018")]
++[assembly: AssemblyTrademark("")]
++[assembly: AssemblyCulture("")]
++
++// Setting ComVisible to false makes the types in this assembly not visible
++// to COM components.  If you need to access a type in this assembly from
++// COM, set the ComVisible attribute to true on that type.
++[assembly: ComVisible(false)]
++
++// The following GUID is for the ID of the typelib if this project is exposed to COM
++[assembly: Guid("cb8100fa-c323-4772-9980-30925294eb24")]
++
++// Version information for an assembly consists of the following four values:
++//
++//      Major Version
++//      Minor Version
++//      Build Number
++//      Revision
++//
++// You can specify all the values or you can default the Build and Revision Numbers
++// by using the '*' as shown below:
++// [assembly: AssemblyVersion("1.0.*")]
++[assembly: AssemblyVersion("1.0.0.0")]
++[assembly: AssemblyFileVersion("1.0.0.0")]
