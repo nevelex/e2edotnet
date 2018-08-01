@@ -19,6 +19,27 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 namespace E2ETestRunner
 {
+    [TestSuite("Sample test suite for unit testing")]
+    public class SampleTestSuite
+    {
+        [Test("Passing test", Description = "Test passes")]
+        public void PassingTest(TestRunner runner)
+        {
+
+        }
+        [Test("Failing test")]
+        public void FailingTest(TestRunner runner)
+        {
+            throw new Exception("test message");
+        }
+        [Test("Assertion failure test")]
+        public void AssertionFailure(TestRunner runner)
+        {
+            throw new AssertionFailure("test");
+        }
+
+
+    }
     [TestSuite("Login Screen",URL ="")]
     public class ExampleTests
     {

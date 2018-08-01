@@ -1,31 +1,188 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@{ 
+/*============================================================================
+Nevelex Proprietary
+Copyright 2018 Nevelex Corporation
+UNPUBLISHED WORK
+ALL RIGHTS RESERVED
+This software is the confidential and proprietary information of
+Nevelex Corporation ("Proprietary Information"). Any use, reproduction,
+distribution or disclosure of the software or Proprietary Information,
+in whole or in part, must comply with the terms of the license
+agreement, nondisclosure agreement or contract entered into with
+Nevelex providing access to this software.
+==============================================================================*/
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+@model E2EDotNet.Models.E2EScreen
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>E2E Test Runner</h2>
+
+
+<table class="table" id="testTable">
+    <tr>
+
+        <th>
+            Test name
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Test description
+        </th>
+        <th>Enabled</th>
+        <th></th>
+    </tr>
+    @foreach (var test in Model.Tests)
+    {
+    <tr id="test_@test.ID">
+        <td>@test.Name</td>
+        <td id="test_status_@test.ID">
+            @if (test.IsCompleted)
+            {
+                if (test.ErrorMessage != null)
+                {
+                    <span style="color:red;">Error:<br /><pre style="background-color:gray;color:black;">@test.ErrorMessage</pre></span>
+                }
+                else
+                {
+                    <span style="color:green">Completed</span>
+                }
+            }
+            else
+            {
+                <span>Not Completed</span>
+            }
+        </td>
+        <td>@test.Description</td>
+        <td><input type="checkbox" checked="checked" /></td>
+    </tr>
+}
+</table>
+
+<div id="highLevelStatus">
+    @if (Model.IsRunning)
+    {
+        <span>Completed @Model.SelectedTests.Where(m => m.IsCompleted).Count() of @Model.SelectedTests.Count</span>
+    }
+    else
+    {
+        <span>No tests are running.</span>
+    }
 </div>
+<select id="browserSelection">
+    <option value="0">Chrome</option>
+    <option value="4">Remote browser via Selenium wire protocol</option>
+</select>
+<input type="text" id="remoteHost" style="display:none" />
+<input type="button" value="Start tests" id="startStopBtn" />
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var browserSelection = document.getElementById('browserSelection');
+            var remoteHost = document.getElementById('remoteHost');
+            var enabledTests = {};
+            browserSelection.onchange = function () {
+                if (browserSelection.value == '4') {
+                    remoteHost.style.display = '';
+                } else {
+                    remoteHost.style.display = 'none';
+                }
+            };
+            var isRunning = @(Model.IsRunning ? "true" : "false");
+            var testCount = @Model.SelectedTests.Count;
+            var startStopBtn = document.getElementById('startStopBtn');
+            var firstTest = document.getElementById('test_0');
+            var i = 0;
+            for (var test = firstTest; test != null; test = test.nextSibling) {
+                if (test.nodeType == Node.ELEMENT_NODE) {
+                    test.testInfo = { id: i, enableCheckbox: test.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.firstChild }; //Would be nice if IE supported nextElementSibling
+                    i++;
+                }
+            }
+            var highLevelStatus = document.getElementById('highLevelStatus');
+            var lastUpdatedID = 0;
+            var doLongPoll = function () {
+                $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 2 })).done(function (data) {
+
+                    if (data.op == 0) {
+                        //All tests complete
+                        highLevelStatus.innerText = 'No tests are running.';
+                        isRunning = false;
+                        startStopBtn.value = 'Start tests';
+                        doLongPoll();
+                        return;
+                    }
+                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 3, id: lastUpdatedID }), function (data) {
+                        var completed = data.completed;
+                        testCount = data.testCount;
+                        var list = data.list;
+                        for (var i = 0; i < list.length; i++) {
+                            var test = list[i];
+                            if (test.completed) {
+                                var elem = document.getElementById('test_status_' + test.id);
+                                elem.innerHTML = '';
+                                if (test.errorMessage) {
+                                    elem.style.color = 'red';
+                                    var span = document.createElement('span');
+                                    span.innerText = 'Error:';
+                                    elem.appendChild(span);
+                                    var pre = document.createElement('pre');
+                                    pre.style.backgroundColor = 'gray';
+                                    pre.innerText = test.errorMessage;
+                                    elem.appendChild(pre);
+                                } else {
+                                    elem.style.color = 'green';
+                                    var span = document.createElement('span');
+                                    span.innerText = 'Completed';
+                                    elem.appendChild(span);
+                                }
+                                if (test.id > lastUpdatedID) {
+                                    lastUpdatedID = test.id;
+                                }
+                            }
+
+                            if (testCount) {
+                                highLevelStatus.innerText = 'Completed ' + completed + ' of ' + testCount;
+                            }
+                        }
+                    });
+                    doLongPoll();
+                }).catch(function () {
+                    doLongPoll();
+                });
+            };
+            doLongPoll();
+            startStopBtn.onclick = function () {
+                if (isRunning) {
+                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 1 }));
+                    startStopBtn.value = 'Start tests';
+                    isRunning = false;
+                } else {
+                    var tests = [];
+                    enabledTests = {};
+                    lastUpdatedID = 0;
+                    for (var test = firstTest; test != null; test = test.nextSibling) {
+                        if (test.nodeType == Node.ELEMENT_NODE) {
+                            if (test.testInfo.enableCheckbox.checked) {
+                                tests.push(test.testInfo.id);
+                                enabledTests[test.testInfo.id] = true;
+                            }
+                        }
+                    }
+                    testCount = tests.length;
+                    highLevelStatus.innerText = 'Completed 0 of ' + testCount;
+                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 0, tests: tests, browser: browserSelection.value | 0, host: remoteHost.value }));
+                    startStopBtn.value = 'Stop tests';
+                    isRunning = true;
+                }
+            };
+        });
+    </script>
+}
