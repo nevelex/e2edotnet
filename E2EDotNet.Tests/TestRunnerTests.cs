@@ -1,4 +1,17 @@
-﻿#pstein: Need some standard Nevelex copyright header
+﻿/*============================================================================
+Nevelex Proprietary
+Copyright 2018 Nevelex Corporation
+UNPUBLISHED WORK
+ALL RIGHTS RESERVED
+This software is the confidential and proprietary information of
+Nevelex Corporation ("Proprietary Information"). Any use, reproduction,
+distribution or disclosure of the software or Proprietary Information,
+in whole or in part, must comply with the terms of the license
+agreement, nondisclosure agreement or contract entered into with
+Nevelex providing access to this software.
+==============================================================================*/
+//pstein: Need some standard Nevelex copyright header
+// REPLY (bbosak): Fixed.
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using E2ETestRunner;
 using System;
@@ -8,7 +21,9 @@ using System.Text;
 using System.Threading.Tasks;
 namespace E2ETestRunner.Tests
 {
-    #pstein: These are already covered in the ExampleTests. Having them here means the E2E's own E2E tests don't all pass, right?
+    //pstein: These are already covered in the ExampleTests. Having them here means the E2E's own E2E tests don't all pass, right?
+    // These are here for unit testing purposes, to ensure the framework works properly. The ones in ExampleTests are intended as integration tests
+    // because they actually invoke JavaScript (perform I/O) in real browsers. These don't perform any I/O or depend on a real browser existing.
     [TestSuite("Sample test suite")]
     public class SampleTestSuite
     {
@@ -54,18 +69,25 @@ namespace E2ETestRunner.Tests
             };
             runner.Run(tests);
             //assert
-            #pstein: minor quibble on order here. I'd like to see all of the assertions grouped by test. Here you assert about 0,0,0,1,1,2,2,1,1,2,2.
-            #pstein: I'd also find this much more readable with vertical whitespace in it between groups
+            //pstein: minor quibble on order here. I'd like to see all of the assertions grouped by test. Here you assert about 0,0,0,1,1,2,2,1,1,2,2.
+            //pstein: I'd also find this much more readable with vertical whitespace in it between groups
+            // REPLY (bbosak): Fixed.
+            
+            //First test (passing)
             Assert.AreEqual(testSuites.First().Name, "Sample test suite");
             Assert.AreEqual(tests[0].Name, "Passing test");
             Assert.AreEqual(tests[0].Description, "Test passes");
             Assert.AreEqual(results[tests[0]], null);
+
+            //Second test (failing due to exception)
             Assert.IsInstanceOfType(results[tests[1]].InnerException,typeof(Exception));
-            Assert.AreEqual(results[tests[1]].Message, "test message");
-            Assert.AreEqual(results[tests[2]].Message, "test");
-            Assert.AreEqual(results[tests[2]].InnerException, null);
             Assert.AreEqual(tests[1].Name, "Failing test");
             Assert.AreEqual(tests[1].Description, null);
+            Assert.AreEqual(results[tests[1]].Message, "test message");
+
+            //Third test (failing due to assertion)
+            Assert.AreEqual(results[tests[2]].Message, "test");
+            Assert.AreEqual(results[tests[2]].InnerException, null);
             Assert.AreEqual(tests[2].Name, "Assertion failure test");
             Assert.AreEqual(tests[2].Description, null);
         }

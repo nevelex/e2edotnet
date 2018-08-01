@@ -1,4 +1,18 @@
-﻿#pstein: Need some standard Nevelex copyright header
+﻿/*============================================================================
+Nevelex Proprietary
+Copyright 2018 Nevelex Corporation
+UNPUBLISHED WORK
+ALL RIGHTS RESERVED
+This software is the confidential and proprietary information of
+Nevelex Corporation ("Proprietary Information"). Any use, reproduction,
+distribution or disclosure of the software or Proprietary Information,
+in whole or in part, must comply with the terms of the license
+agreement, nondisclosure agreement or contract entered into with
+Nevelex providing access to this software.
+==============================================================================*/
+
+//pstein: Need some standard Nevelex copyright header
+// REPLY (bbosak): Fixed.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +30,11 @@ namespace E2ETestRunner
 
         }
         [Test("Demo failing test",Description = "test fails due to an exception")]
-        public unsafe void FailingTest(TestRunner runner)
+        public void FailingTest(TestRunner runner)
         {
-            int* ptr = (int*)new IntPtr(0).ToPointer();
-            *ptr = 5; //SEGFAULT!
-            #pstein: Some platforms let you write to memory address zero, or is this always illegal in C#? I would be happier if this test just threw an exception instead of tried to get the system to generate one... except maybe a divide by zero error.
+            throw new Exception();
+            //pstein: Some platforms let you write to memory address zero, or is this always illegal in C#? I would be happier if this test just threw an exception instead of tried to get the system to generate one... except maybe a divide by zero error.
+            // REPLY (bbosak): Fixed.
         }
         
         [Test("Demo assertion failure", Description = "Test fails due to an assertion")]
