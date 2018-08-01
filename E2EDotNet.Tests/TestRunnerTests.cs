@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿#pstein: Need some standard Nevelex copyright header
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using E2ETestRunner;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace E2ETestRunner.Tests
 {
+    #pstein: These are already covered in the ExampleTests. Having them here means the E2E's own E2E tests don't all pass, right?
     [TestSuite("Sample test suite")]
     public class SampleTestSuite
     {
@@ -52,6 +54,8 @@ namespace E2ETestRunner.Tests
             };
             runner.Run(tests);
             //assert
+            #pstein: minor quibble on order here. I'd like to see all of the assertions grouped by test. Here you assert about 0,0,0,1,1,2,2,1,1,2,2.
+            #pstein: I'd also find this much more readable with vertical whitespace in it between groups
             Assert.AreEqual(testSuites.First().Name, "Sample test suite");
             Assert.AreEqual(tests[0].Name, "Passing test");
             Assert.AreEqual(tests[0].Description, "Test passes");

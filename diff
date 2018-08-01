@@ -1,3 +1,4 @@
+#pstein: Remove this file
 diff --git a/E2EDotNet.Tests/App.config b/E2EDotNet.Tests/App.config
 index d736f67..2bd1a5b 100644
 --- a/E2EDotNet.Tests/App.config

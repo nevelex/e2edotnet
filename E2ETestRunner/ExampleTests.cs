@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pstein: Need some standard Nevelex copyright header
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace E2ETestRunner
         {
             int* ptr = (int*)new IntPtr(0).ToPointer();
             *ptr = 5; //SEGFAULT!
+            #pstein: Some platforms let you write to memory address zero, or is this always illegal in C#? I would be happier if this test just threw an exception instead of tried to get the system to generate one... except maybe a divide by zero error.
         }
         
         [Test("Demo assertion failure", Description = "Test fails due to an assertion")]
