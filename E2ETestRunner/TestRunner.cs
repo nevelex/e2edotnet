@@ -315,7 +315,8 @@ namespace E2ETestRunner
         //#pstein: change name to explorer (Sorry)
         // REPLY (bbosak): Fixed......
 	//#pstein: Actually, I meant the variable name, I just glossed over it in the comment.
-        RemoteWebDriver exploder;
+    // REPLY (bbosak): Fixed.
+        RemoteWebDriver ie;
         /// <summary>
         /// Constructs a new Internet Exploder driver
         /// </summary>
@@ -325,13 +326,13 @@ namespace E2ETestRunner
         {
             if (windows10Version)
             {
-                exploder = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
+                ie = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
             }
             else
             {
-                exploder = new InternetExplorerDriver(new InternetExplorerOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
+                ie = new InternetExplorerDriver(new InternetExplorerOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
             }
-            driver = exploder;
+            driver = ie;
         }
         protected override void Dispose(bool disposing)
         {
@@ -339,13 +340,13 @@ namespace E2ETestRunner
             {
                 try
                 {
-                    exploder.Close();
+                    ie.Close();
                 }
                 catch (Exception er)
                 {
 
                 }
-                exploder.Dispose();
+                ie.Dispose();
             }
             base.Dispose(disposing);
         }
