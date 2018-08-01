@@ -314,7 +314,7 @@ namespace E2ETestRunner
     {
         RemoteWebDriver ie;
         /// <summary>
-        /// Constructs a new Internet Exploder driver
+        /// Constructs a new IE driver
 	// #pstein: another place that still says Exploder
         /// </summary>
         /// <param name="baseURL">The base URL to use</param>
@@ -347,17 +347,18 @@ namespace E2ETestRunner
     public class EdgeTestRunner : TestRunner
     {
 	// #pstein: would like ie here changed to edge
-        RemoteWebDriver ie;
+    // REPLY (bbosak): Fixed.
+        RemoteWebDriver edge;
         /// <summary>
-        /// Constructs a new Internet Exploder driver
+        /// Constructs a new Edge driver
 	// #pstein: another place that still says Exploder and this one shouldn't say it at all
         /// </summary>
         /// <param name="baseURL">The base URL to use</param>
         /// <param name="windows10Version">Whether or not to use the Windows 10 version</param>
         public EdgeTestRunner(string baseURL) : base(baseURL)
         {
-            ie = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
-            driver = ie;
+            edge = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
+            driver = edge;
         }
         protected override void Dispose(bool disposing)
         {
@@ -365,13 +366,13 @@ namespace E2ETestRunner
             {
                 try
                 {
-                    ie.Close();
+                    edge.Close();
                 }
                 catch (Exception er)
                 {
 
                 }
-                ie.Dispose();
+                edge.Dispose();
             }
             base.Dispose(disposing);
         }
