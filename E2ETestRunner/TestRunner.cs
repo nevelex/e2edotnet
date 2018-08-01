@@ -40,7 +40,7 @@ namespace E2ETestRunner
         /// <summary>
         /// The human-readable name of the test suite (required)
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
         public TestSuiteAttribute(string Name)
         {
             this.Name = Name;
@@ -54,7 +54,7 @@ namespace E2ETestRunner
         /// <summary>
         /// The name of the test
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
         /// <summary>
         /// An optional description of the test
         /// </summary>
@@ -125,7 +125,7 @@ namespace E2ETestRunner
         /// <param name="test">The test that completed</param>
         /// <param name="failure">Test failure exception, or null if successful</param>
         public delegate void TestCompletionDelegate(Test test, AssertionFailure failure);
-        public event TestCompletionDelegate onTestComplete;
+        public event TestCompletionDelegate OnTestComplete;
         /// <summary>
         /// Runs a series of tests
         /// </summary>
@@ -145,12 +145,12 @@ namespace E2ETestRunner
                     try
                     {
                         test.RunTest(caseInstance, this);
-                        onTestComplete?.Invoke(test, null);
+                        OnTestComplete?.Invoke(test, null);
                     }
                     catch (TargetInvocationException er)
                     {
                         var ex = er.InnerException;
-                        onTestComplete?.Invoke(test, ex as AssertionFailure ?? new AssertionFailure(ex.Message, ex));
+                        OnTestComplete?.Invoke(test, ex as AssertionFailure ?? new AssertionFailure(ex.Message, ex));
                     }
                 }
 
@@ -171,13 +171,13 @@ namespace E2ETestRunner
         /// <param name="text">The script to execute. MUST call done when finished.</param>
         /// <param name="args">Arguments to pass to the JavaScript code. Must not be null.</param>
         /// <returns></returns>
-        internal object InjectScript(string text, object[] args)
+        internal object InjectScript(string text, params object[] args)
         {
             string txt = $"var done = arguments[{args.Length}];\n{text}";
             return driver.ExecuteAsyncScript(txt, args);
         }
         /// <summary>
-        /// Finds DON elements matching the specified criteria
+        /// Finds DOM elements matching the specified criteria
         /// </summary>
         /// <param name="bye">The criterion to match by</param>
         /// <returns></returns>
@@ -321,17 +321,47 @@ namespace E2ETestRunner
         /// Constructs a new Internet Exploder driver
         /// </summary>
         /// <param name="baseURL">The base URL to use</param>
-        /// <param name="windows10Version">Whether or not to use the Windows 10 version</param>
-        public IETestRunner(string baseURL, bool windows10Version = false) : base(baseURL)
+        public IETestRunner(string baseURL) : base(baseURL)
         {
-            if (windows10Version)
+            ie = new InternetExplorerDriver(new InternetExplorerOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
+            driver = ie;
+        }
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposedValue)
             {
-                ie = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
+                try
+                {
+                    ie.Close();
+                }
+                catch (Exception er)
+                {
+
+                }
+                ie.Dispose();
             }
-            else
-            {
-                ie = new InternetExplorerDriver(new InternetExplorerOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
-            }
+            base.Dispose(disposing);
+        }
+    }
+
+    /// <summary>
+    /// A test runner for Edge
+    /// </summary>
+    public class EdgeTestRunner : TestRunner
+    {
+        //#pstein: change name to explorer (Sorry)
+        // REPLY (bbosak): Fixed......
+        //#pstein: Actually, I meant the variable name, I just glossed over it in the comment.
+        // REPLY (bbosak): Fixed.
+        RemoteWebDriver ie;
+        /// <summary>
+        /// Constructs a new Internet Exploder driver
+        /// </summary>
+        /// <param name="baseURL">The base URL to use</param>
+        /// <param name="windows10Version">Whether or not to use the Windows 10 version</param>
+        public EdgeTestRunner(string baseURL) : base(baseURL)
+        {
+            ie = new EdgeDriver(new EdgeOptions() { PageLoadStrategy = PageLoadStrategy.Normal });
             driver = ie;
         }
         protected override void Dispose(bool disposing)

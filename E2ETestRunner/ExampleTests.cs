@@ -54,7 +54,7 @@ namespace E2ETestRunner
         [Test("User interaction test", Description = "Example of a test that requires user interaction")]
         public void UserInteractionTest(TestRunner runner)
         {
-            bool retval = (bool)runner.InjectScript("makeUserClickButton(function(){done(true);});", new object[0]);
+            bool retval = (bool)runner.InjectScript("makeUserClickButton(function(){done(true);});");
             if (!retval)
             {
                 throw new AssertionFailure("Didn't get what we were expecting from the browser.");

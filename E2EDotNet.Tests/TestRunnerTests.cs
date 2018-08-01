@@ -43,7 +43,7 @@ namespace E2ETestRunner.Tests
     [TestClass()]
     public class TestRunnerTests
     {
-        public class TestTestRunner:TestRunner
+        public class TestTestRunner : TestRunner
         {
             public TestTestRunner():base(null)
             {
@@ -59,7 +59,7 @@ namespace E2ETestRunner.Tests
             var tests = testSuites.SelectMany(m => m.Tests).ToList();
             Dictionary<Test, AssertionFailure> results = new Dictionary<Test, AssertionFailure>();
             //act
-            runner.onTestComplete += (test, err) => {
+            runner.OnTestComplete += (test, err) => {
                 results[test] = err;
             };
             runner.Run(tests);
@@ -74,14 +74,14 @@ namespace E2ETestRunner.Tests
             //Second test (failing due to exception)
             Assert.IsInstanceOfType(results[tests[1]].InnerException,typeof(Exception));
             Assert.AreEqual(tests[1].Name, "Failing test");
-            Assert.AreEqual(tests[1].Description, null);
+            Assert.IsNull(tests[1].Description);
             Assert.AreEqual(results[tests[1]].Message, "test message");
 
             //Third test (failing due to assertion)
             Assert.AreEqual(results[tests[2]].Message, "test");
             Assert.AreEqual(results[tests[2]].InnerException, null);
             Assert.AreEqual(tests[2].Name, "Assertion failure test");
-            Assert.AreEqual(tests[2].Description, null);
+            Assert.IsNull(tests[2].Description);
         }
     }
 }
