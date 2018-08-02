@@ -92,7 +92,7 @@ namespace E2EDotNet.Controllers
                             completionCount = 0;
                             ActiveRunner.Run(screenState.SelectedTests.Select(m => m.Test));
                         }
-                        catch (System.Threading.ThreadAbortException er)
+                        catch (System.Threading.ThreadAbortException)
                         {
                             System.Threading.Thread.ResetAbort();
                         }

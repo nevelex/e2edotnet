@@ -1,3 +1,4 @@
+// #pstein: Need copyright header
 ﻿#if DEBUG || E2E
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,7 @@ namespace E2EDotNet.Models
         /// </summary>
         public E2EScreen()
         {
+// #pstein: What does eger mean? Wouldn't this make more sense being called 'id' or 'testID'?
             int eger = 0;
             Tests = TestRunner.TestSuites.SelectMany(m => m.Tests.Select(a => new { Suite = m, Test = a })).Select(m => new E2ETest() { TestSuite = m.Suite, Name = m.Test.Name, Description = m.Test.Description, ID = eger++, Test = m.Test }.SetUserData()).ToList();
             SelectedTests = new List<E2ETest>();
