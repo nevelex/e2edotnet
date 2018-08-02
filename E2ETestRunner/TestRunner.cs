@@ -315,7 +315,6 @@ namespace E2ETestRunner
         RemoteWebDriver ie;
         /// <summary>
         /// Constructs a new IE driver
-	// #pstein: another place that still says Exploder
         /// </summary>
         /// <param name="baseURL">The base URL to use</param>
         public IETestRunner(string baseURL) : base(baseURL)
@@ -346,12 +345,9 @@ namespace E2ETestRunner
     /// </summary>
     public class EdgeTestRunner : TestRunner
     {
-	// #pstein: would like ie here changed to edge
-    // REPLY (bbosak): Fixed.
         RemoteWebDriver edge;
         /// <summary>
         /// Constructs a new Edge driver
-	// #pstein: another place that still says Exploder and this one shouldn't say it at all
         /// </summary>
         /// <param name="baseURL">The base URL to use</param>
         /// <param name="windows10Version">Whether or not to use the Windows 10 version</param>
