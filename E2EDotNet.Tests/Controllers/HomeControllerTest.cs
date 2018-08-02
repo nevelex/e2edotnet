@@ -74,15 +74,14 @@ namespace E2EDotNet.Tests.Controllers
         {
             // Arrange
             HomeController controller = new HomeController();
-            controller.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"op\":0,\"browser\":5,\"tests\":[0,2]}") };
+            controller.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"browser\":\"UnitTests\",\"tests\":[0,2]}") };
             HomeController listeningController = new HomeController();
-            listeningController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"op\":2}") };
             HomeController resultsController = new HomeController();
-            resultsController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"op\":3,id:0}") };
+            resultsController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{id:0}") };
             // Act
-            var eventListener = listeningController.PerformAction();
-            controller.PerformAction().Wait();
-            var res = JsonConvert.DeserializeObject<JsonListResponse>(JsonConvert.SerializeObject((resultsController.PerformAction().Result as JsonResult).Data));
+            var eventListener = listeningController.LongPoll();
+            controller.RunTests();
+            var res = JsonConvert.DeserializeObject<JsonListResponse>(JsonConvert.SerializeObject((resultsController.GetTestInfo() as JsonResult).Data));
             // Assert
             Assert.IsTrue(eventListener.IsCompleted);
             Assert.AreEqual(2, res.testCount);
