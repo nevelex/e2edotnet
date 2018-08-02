@@ -10,8 +10,6 @@ in whole or in part, must comply with the terms of the license
 agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
-//pstein: Need some standard Nevelex copyright header
-// REPLY (bbosak): Fixed.
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using E2ETestRunner;
 using System;
@@ -21,9 +19,6 @@ using System.Text;
 using System.Threading.Tasks;
 namespace E2ETestRunner.Tests
 {
-    //pstein: These are already covered in the ExampleTests. Having them here means the E2E's own E2E tests don't all pass, right?
-    // These are here for unit testing purposes, to ensure the framework works properly. The ones in ExampleTests are intended as integration tests
-    // because they actually invoke JavaScript (perform I/O) in real browsers. These don't perform any I/O or depend on a real browser existing.
     [TestSuite("Sample test suite")]
     public class SampleTestSuite
     {
@@ -69,9 +64,6 @@ namespace E2ETestRunner.Tests
             };
             runner.Run(tests);
             //assert
-            //pstein: minor quibble on order here. I'd like to see all of the assertions grouped by test. Here you assert about 0,0,0,1,1,2,2,1,1,2,2.
-            //pstein: I'd also find this much more readable with vertical whitespace in it between groups
-            // REPLY (bbosak): Fixed.
             
             //First test (passing)
             Assert.AreEqual(testSuites.First().Name, "Sample test suite");

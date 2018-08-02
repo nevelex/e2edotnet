@@ -11,8 +11,6 @@ agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
 
-//pstein: Need some standard Nevelex copyright header
-// REPLY (bbosak): Fixed.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,8 +67,6 @@ namespace E2ETestRunner
     /// <summary>
     /// An assertion failure
     /// </summary>
-    //#pstein: would like an explanation of the parameters here even though they are pretty standard
-    //REPLY (bbosak): Fixed.
     public class AssertionFailure:Exception
     {
         /// <summary>
@@ -108,18 +104,12 @@ namespace E2ETestRunner
     /// A test runner that permits the execution of tests for a particular web browser
     /// </summary>
     public abstract class TestRunner:IDisposable
-    {   //#pstein: coding standards question: do we have a defined order for properties vs. methods and public vs. protected/private?
-        // REPLY (bbosak): Not that I'm aware of. Should there be; if so, what should it be?
+    {
         protected RemoteWebDriver driver;
         string baseURL;
         public static readonly IEnumerable<TestSuite> TestSuites = GetSuitesForAssembly(typeof(TestRunner).Assembly);
         public static IEnumerable<TestSuite> GetSuitesForAssembly(Assembly assembly)
-        {   //#pstein: if would love it if this line were broken up, at least between Select() clauses. I know this is how MS does their examples, but seriously... this line is epically long and has at least three top-level Select calls and at least one nested one. I was trying to write a comment here as long as this line, but I just am not going to make it without resorting to pasting Lorem Ipsum in here.
-            // REPLY (bbosak): Fixed
-            //#pstein: At the very least, a comment briefly describing this: Find all classes with the TestSuiteAttribute, then find all of the methods in that suite with the TestAttribute and return a list of Test Suite instances populated with their tests?
-            // REPLY (bbosak): Fixed.
-            //#pstein: Shouldn't it be possible to avoid using the FirstOrDefault() and then != null with a Where() clause something like Where( m => m.HasCustomAttribute(typeof(TestSuiteAttribute) )
-
+        {
             //Find all classes with the TestSuiteAttribute, then find all of the methods in that suite with the TestAttribute and return a list of TestSuite instances populated with their tests
             return assembly.GetTypes().Where(m=>m.HasCustomAttribute<TestSuiteAttribute>()).Select(m => new { SuiteInfo = m.GetCustomAttribute<TestSuiteAttribute>(), Class = m })
                 .Select(m => new { Suite = m, TestMethods = m.Class.GetMethods().Where(a=>a.HasCustomAttribute<TestAttribute>()).Select(a => new { TestInfo = a.GetCustomAttribute<TestAttribute>(), Method = a }) })
@@ -129,8 +119,6 @@ namespace E2ETestRunner
         {
             this.baseURL = baseURL;
         }
-        //#pstein: please add documentation for the delegate.
-        //REPLY (bbosak): Fixed.
         /// <summary>
         /// Completion delegate that is invoked when a test completes
         /// </summary>
@@ -147,8 +135,6 @@ namespace E2ETestRunner
             var grouping = tests.GroupBy(m => m.suite);
             foreach (var testCase in grouping)
             {
-                //#pstein: I'd like to see the Test class below have a 'RunTest()' or 'Invoke' method on it that makes an instance and invokes it. But, I'm okay with this, too.
-                // REPLY (bbosak): Fixed.
                 var caseInstance = testCase.Key.type.GetConstructor(new Type[0]).Invoke(new object[0]);
                 if(testCase.Key.URL != null)
                 {
@@ -187,8 +173,6 @@ namespace E2ETestRunner
         /// <returns></returns>
         internal object InjectScript(string text, object[] args)
         {
-//# pstein: Microsoft C# coding conventions recommends using string interpolation  https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/inside-a-program/coding-conventions#string-data-type
-// REPLY (bbosak): Fixed.
             string txt = $"var done = arguments[{args.Length}];\n{text}";
             return driver.ExecuteAsyncScript(txt, args);
         }
@@ -233,8 +217,6 @@ namespace E2ETestRunner
 
     /// <summary>
     /// Represents a test that can be run
-    //#pstein: I believe "can be run" is the proper conjugation here....
-    // REPLY (bbosak): Fix.
     /// </summary>
     public class Test
     {
@@ -299,9 +281,6 @@ namespace E2ETestRunner
     /// <summary>
     /// A test runner for Firefox.
     /// </summary>
-    //#pstein: On your machine, this code doesn't actually work, right? Firefox immediately exits, if I overheard correctly. Do you expect it to work on some people's machines? Or, should we nuke the reference to Firefox here and in the packages.config?
-    // REPLY (bbosak): I think we should leave it in here in case they eventually fix it. In the meantime; the UI just won't show this as an option. There is the posibility that it's only on my machine too.
-    // we could also try to make our own version of Selenium that works properly on Windows and upstream the patch; but we'd need permission from management to do that.
     public class FirefoxTestRunner : TestRunner
     {
         FirefoxDriver firefox;
@@ -335,6 +314,7 @@ namespace E2ETestRunner
     {
         //#pstein: change name to explorer (Sorry)
         // REPLY (bbosak): Fixed......
+	//#pstein: Actually, I meant the variable name, I just glossed over it in the comment.
         RemoteWebDriver exploder;
         /// <summary>
         /// Constructs a new Internet Exploder driver
@@ -374,8 +354,6 @@ namespace E2ETestRunner
     /// <summary>
     /// A generic remote test runner
     /// </summary>
-    //#pstein: I'm not clear on what the purpose is here. Is the purpose to run E2E tests on a server running on some other machine? Or with some other browser?
-    // REPLY (bbosak): Both. It's a generic remote test runner. You just specify a URL, and it runs the tests using the Selenium endpoint at that URL.
     public class RemoteRunner:TestRunner
     {
         public RemoteRunner(string baseURL, string remoteServer) : base(baseURL)

@@ -11,8 +11,6 @@ agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
 
-//pstein: Need some standard Nevelex copyright header
-// REPLY (bbosak): Fixed.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +31,6 @@ namespace E2ETestRunner
         public void FailingTest(TestRunner runner)
         {
             throw new Exception();
-            //pstein: Some platforms let you write to memory address zero, or is this always illegal in C#? I would be happier if this test just threw an exception instead of tried to get the system to generate one... except maybe a divide by zero error.
-            // REPLY (bbosak): Fixed.
         }
         
         [Test("Demo assertion failure", Description = "Test fails due to an assertion")]

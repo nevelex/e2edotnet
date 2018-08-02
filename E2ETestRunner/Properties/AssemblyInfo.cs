@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("E2ETestRunner")]
-[assembly: AssemblyDescription("End to End Test Runner")] //pstein: Add description (bbosak): Fixed.
+[assembly: AssemblyDescription("End to End Test Runner")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Nevelex Corporation")] //#pstein: Add Nevelex corporation here //REPLY (bbosak): Fixed.
+[assembly: AssemblyCompany("Nevelex Corporation")]
 [assembly: AssemblyProduct("E2ETestRunner")]
-[assembly: AssemblyCopyright("Copyright © Nevelex Corporation 2018")] //#pstein: Add Nevelex corporation here //REPLY (bbosak): Fixed.
+[assembly: AssemblyCopyright("Copyright © Nevelex Corporation 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("E2EDotNet.Tests")]
