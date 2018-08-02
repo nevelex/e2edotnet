@@ -78,7 +78,6 @@ Nevelex providing access to this software.
     }
 </div>
 <select id="browserSelection">
-#pstein: As mentioned in the C# side, I'd much prefer value="chrome" here
     <option value="Chrome">Chrome</option>
     <option value="Remote">Remote browser via Selenium wire protocol</option>
 </select>
@@ -88,8 +87,6 @@ Nevelex providing access to this software.
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-// #pstein: I don't have a problem with this, but isn't JQuery installed and wouldn't it simplify a bunch of the getElement*() calls here?
-            //REPLY (bbosak): Fixed.
             var browserSelection = $('#browserSelection')[0];
             var remoteHost = $('#remoteHost')[0];
             var enabledTests = {};
@@ -107,9 +104,6 @@ Nevelex providing access to this software.
             var i = 0;
             for (var test = firstTest; test != null; test = test.nextSibling) {
                 if (test.nodeType == Node.ELEMENT_NODE) {
-// #pstein: What am I missing here, the checkbox looks to me to be the fourth sibling... or do you also have to skip the whitespace between the TD elements?
-                    // #pstein: I would prefer either giving the checkbox an ID tag or using the queryBySelector to find td>input[type="checkbox"]
-                    // REPLY (bbosak): Fixed. Gave the checkboxes a class that can be jQueried.
                     test.testInfo = { id: i, enableCheckbox: $(test).find('.testCheckbox')[0] };
                     i++;
                 }
@@ -117,8 +111,6 @@ Nevelex providing access to this software.
             var highLevelStatus = $('#highLevelStatus')[0];
             var lastUpdatedID = 0;
             var doLongPoll = function () {
-// #pstein: As mentioned in the code, use different actions rather than different 'op' integers (throughout)
-                // REPLY (bbosak): Fixed.
                 $.post('@Url.Action("LongPoll")').done(function (data) {
 
                     if (data.op == 0) {
@@ -126,8 +118,6 @@ Nevelex providing access to this software.
                         highLevelStatus.innerText = 'No tests are running.';
                         isRunning = false;
                         startStopBtn.value = 'Start tests';
-// #pstein: Why do a long poll if no tests are running? Do we expect someone else to run tests and the results to show on our browser, too?
-                        // REPLY (bbosak): Fixed.
                         return;
                     }
                     $.post('@Url.Action("GetTestInfo")', JSON.stringify({ id: lastUpdatedID }), function (data) {
@@ -164,8 +154,6 @@ Nevelex providing access to this software.
                             }
                         }
                     });
-// #pstein: can this be a 'finally' instead of a catch' and eliminate having to call doLongPoll() in every return path above?
-                    // REPLY (bbosak): Fixed.
                 }).always(function () {
                     if (isRunning) {
                         doLongPoll();

@@ -35,6 +35,7 @@ namespace E2EDotNet.Controllers
         /// <summary>
         /// Retrieves the JSON for the current request
         /// </summary>
+	    // #pstein: Is there a compelling reason not to use statically typed JSON? Future-compatibility, maybe? I dunno.
         dynamic JSON
         {
             get
@@ -62,6 +63,7 @@ namespace E2EDotNet.Controllers
                 testThread = System.Threading.Thread.CurrentThread;
                 switch (cmd.browser.ToString())
                 {
+		    // #pstein: all of these cases generate the same URL, would like to see that done once before or in a function... and with string interpolation if reasonable.
                     case "Chrome":
                         ActiveRunner = new ChromeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
                         break;
@@ -81,6 +83,7 @@ namespace E2EDotNet.Controllers
                         ActiveRunner = new TestTestRunner();
                         break;
                     default:
+		    // #pstein: Should be Json("InvalidBrowserID") or something
                         return Content("Invalid browser ID");
                 }
                 screenState.SelectedTests = (cmd.tests as Newtonsoft.Json.Linq.JArray).Select(m => screenState.Tests[(int)m]).ToList();
@@ -99,6 +102,7 @@ namespace E2EDotNet.Controllers
             ActiveRunner?.Dispose();
             ActiveRunner = null;
             NotifyListeners(null, null);
+	    // #pstein: I think this should be Json("Complete"). All other methods here return JSON
             return Content("Complete");
         }
 
@@ -121,9 +125,12 @@ namespace E2EDotNet.Controllers
             var res = await src.Task;
             if (res.Item1 == null)
             {
+	    // #pstein: Would rather see something other than integer 'op'
+	    // #pstein: Would like to see GetTestInfo() and LongPoll() folded together so that LongPoll() returns results of tests completed since passed in startID.
                 return Json(new { op = 0 }); //All tests have finished executing
             }
             var test = res.Item1.UserData as E2ETest;
+	    // #pstein: Would rather see something other than integer 'op'
             return Json(new { op = 1, id = test.ID }); //One test has finished executing.
         }
 
@@ -142,6 +149,7 @@ namespace E2EDotNet.Controllers
             return Json(new { testCount = screenState.SelectedTests.Count, completed = completionCount, list = testData });
         }
 
+// #pstein: Is this standarad practice or should the 'O' be capitalized?
         private void ActiveRunner_onTestComplete(Test test, AssertionFailure failure)
         {
             var e2etest = test.UserData as E2ETest;
