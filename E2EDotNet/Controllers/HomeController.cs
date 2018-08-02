@@ -33,22 +33,26 @@ namespace E2EDotNet.Controllers
             /// <summary>
             /// The test IDs to run
             /// </summary>
-            public List<int> tests { get; set; }
+            [JsonProperty(PropertyName = "tests")]
+            public List<int> Tests { get; set; }
             /// <summary>
             /// The browser to run the tests in
             /// </summary>
-            public string browser { get; set; }
+            [JsonProperty(PropertyName = "browser")]
+            public string Browser { get; set; }
             /// <summary>
             /// URL for running remote tests
             /// </summary>
-            public string host { get; set; }
+            [JsonProperty(PropertyName = "host")]
+            public string Host { get; set; }
         }
         public class LongPollCommand
         {
             /// <summary>
             /// The last ref from the client
             /// </summary>
-            public int id { get; set; }
+            [JsonProperty(PropertyName = "id")]
+            public int ID { get; set; }
         }
         static TestRunner ActiveRunner; //Active E2E test runner
         static List<TaskCompletionSource<Tuple<Test, AssertionFailure>>> listeners = new List<TaskCompletionSource<Tuple<Test, AssertionFailure>>>(); //event listeners for E2E completion notifications
@@ -82,7 +86,7 @@ namespace E2EDotNet.Controllers
             {
                 testThread = System.Threading.Thread.CurrentThread;
                 string url = $"http{(Request.IsSecureConnection ? "s" : "")}://{Request.Url.DnsSafeHost}:{Request.Url.Port}";
-                switch (cmd.browser.ToString())
+                switch (cmd.Browser.ToString())
                 {
                     case "Chrome":
                         ActiveRunner = new ChromeTestRunner(url);
@@ -97,7 +101,7 @@ namespace E2EDotNet.Controllers
                         ActiveRunner = new EdgeTestRunner(url);
                         break;
                     case "Remote":
-                        ActiveRunner = new RemoteRunner(url, cmd.host);
+                        ActiveRunner = new RemoteRunner(url, cmd.Host);
                         break;
                     case "UnitTests":
                         ActiveRunner = new TestTestRunner();
@@ -105,7 +109,7 @@ namespace E2EDotNet.Controllers
                     default:
                         return Json("InvalidBrowserId");
                 }
-                screenState.SelectedTests = cmd.tests.Select(m => screenState.Tests[m]).ToList();
+                screenState.SelectedTests = cmd.Tests.Select(m => screenState.Tests[m]).ToList();
                 screenState.IsRunning = true;
                 ActiveRunner.OnTestComplete += ActiveRunner_OnTestComplete;
                 completionCount = 0;
@@ -140,10 +144,12 @@ namespace E2EDotNet.Controllers
                 testData.Add(new { completed = test.IsCompleted, errorMessage = test.ErrorMessage, id = test.ID });
             }
             // #pstein: shouldn't the allCompleted here be true when completionCount == SelectedTests.Count()?
-            var retval = new { allCompleted = false, completed = completionCount, testCount = screenState.SelectedTests.Count, list = testData };
+            // REPLY (bbosak): Not using that anymore. Got rid of it now.
+            var retval = new { completed = completionCount, testCount = screenState.SelectedTests.Count, list = testData };
             if (completionCount == screenState.SelectedTests.Count)
             {
                 // #pstein: Why is this getting reset here?
+                // REPLY (bbosak): Fix for race condition where LongPoll is called before the start of the next test round.
                 completionCount = 0;
             }
             return Json(retval); //One test has finished executing.
@@ -159,13 +165,13 @@ namespace E2EDotNet.Controllers
             {
                 listeners.Add(src);
             }
-            if (completionCount>cmd.id+1)
+            if (completionCount>cmd.ID+1)
             {
-                return GetTestInfo(cmd.id+1);
+                return GetTestInfo(cmd.ID+1);
             }
 
             await src.Task;
-            return GetTestInfo(cmd.id+1);
+            return GetTestInfo(cmd.ID+1);
         }
 
         private void ActiveRunner_OnTestComplete(Test test, AssertionFailure failure)

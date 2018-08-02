@@ -32,6 +32,7 @@ namespace E2EDotNet.Tests.Controllers
             public class TestInfo
             {
 // #pstein: might be nice to do this in the HomeController, too. But, up to you.
+// REPLY (bbosak): Fixed.
                 [JsonProperty(PropertyName = "completed")]
                 public bool Completed { get; set; }
                 [JsonProperty(PropertyName = "errorMessage")]
