@@ -51,96 +51,95 @@ namespace E2EDotNet.Controllers
             return View(screenState);
         }
         static System.Threading.Thread testThread;
+
         [HttpPost]
-        public async Task<ActionResult> PerformAction()
+        public ActionResult RunTests()
         {
             dynamic cmd = JSON;
-            switch ((int)cmd.op)
+            //Run tests
+            try
             {
-                case 0:
-                    {
-                        //Run tests
-                        try
-                        {
-                            testThread = System.Threading.Thread.CurrentThread;
-                            switch ((int)cmd.browser)
-                            {
-                                case 0:
-                                    ActiveRunner = new ChromeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
-                                    break;
-                                case 1:
-                                    ActiveRunner = new FirefoxTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
-                                    break;
-                                case 2:
-                                    ActiveRunner = new IETestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
-                                    break;
-                                case 3:
-                                    ActiveRunner = new EdgeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
-                                    break;
-                                case 4:
-                                    ActiveRunner = new RemoteRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port, cmd.host.ToString());
-                                    break;
-                                case 5:
-                                    ActiveRunner = new TestTestRunner();
-                                    break;
-                                default:
-                                    return Content("Invalid browser ID");
-                            }
-                            screenState.SelectedTests = (cmd.tests as Newtonsoft.Json.Linq.JArray).Select(m => screenState.Tests[(int)m]).ToList();
-                            screenState.IsRunning = true;
-                            ActiveRunner.OnTestComplete += ActiveRunner_onTestComplete;
-                            completionCount = 0;
-                            ActiveRunner.Run(screenState.SelectedTests.Select(m => m.Test));
-                        }
-                        catch (System.Threading.ThreadAbortException)
-                        {
-                            System.Threading.Thread.ResetAbort();
-                        }
-
-                        testThread = null;
-                        screenState.IsRunning = false;
-                        ActiveRunner?.Dispose();
-                        ActiveRunner = null;
-                        NotifyListeners(null, null);
-                        return Content("Complete");
-                    }
-                case 1:
-                    {
-                        testThread.Abort(); //Stop tests
-                        return Json("OK");
-                    }
-                case 2:
-                    {
-                        //Long poll for results
-                        TaskCompletionSource<Tuple<Test, AssertionFailure>> src = new TaskCompletionSource<Tuple<Test, AssertionFailure>>();
-                        lock (listeners)
-                        {
-                            listeners.Add(src);
-                        }
-                        var res = await src.Task;
-                        if (res.Item1 == null)
-                        {
-                            return Json(new { op = 0 }); //All tests have finished executing
-                        }
-                        var test = res.Item1.UserData as E2ETest;
-                        return Json(new { op = 1, id = test.ID }); //One test has finished executing.
-
-                    }
-                case 3:
-                    {
-                        //Get test information starting at ID
-                        int startId = (int)cmd.id;
-                        List<object> testData = new List<object>();
-                        for (int i = startId; i < screenState.Tests.Count; i++)
-                        {
-                            var test = screenState.Tests[i];
-                            testData.Add(new { completed = test.IsCompleted, errorMessage = test.ErrorMessage, id = test.ID });
-                        }
-                        return Json(new { testCount = screenState.SelectedTests.Count, completed = completionCount, list = testData });
-                    }
-                default:
-                    return Content("Bad request");
+                testThread = System.Threading.Thread.CurrentThread;
+                switch (cmd.browser.ToString())
+                {
+                    case "Chrome":
+                        ActiveRunner = new ChromeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        break;
+                    case "Firefox":
+                        ActiveRunner = new FirefoxTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        break;
+                    case "IE":
+                        ActiveRunner = new IETestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        break;
+                    case "Edge":
+                        ActiveRunner = new EdgeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        break;
+                    case "Remote":
+                        ActiveRunner = new RemoteRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port, cmd.host.ToString());
+                        break;
+                    case "UnitTests":
+                        ActiveRunner = new TestTestRunner();
+                        break;
+                    default:
+                        return Content("Invalid browser ID");
+                }
+                screenState.SelectedTests = (cmd.tests as Newtonsoft.Json.Linq.JArray).Select(m => screenState.Tests[(int)m]).ToList();
+                screenState.IsRunning = true;
+                ActiveRunner.OnTestComplete += ActiveRunner_onTestComplete;
+                completionCount = 0;
+                ActiveRunner.Run(screenState.SelectedTests.Select(m => m.Test));
             }
+            catch (System.Threading.ThreadAbortException)
+            {
+                System.Threading.Thread.ResetAbort();
+            }
+
+            testThread = null;
+            screenState.IsRunning = false;
+            ActiveRunner?.Dispose();
+            ActiveRunner = null;
+            NotifyListeners(null, null);
+            return Content("Complete");
+        }
+
+        [HttpPost]
+        public ActionResult AbortTests()
+        {
+            testThread.Abort();
+            return Json("OK");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> LongPoll()
+        {
+            //Long poll for results
+            TaskCompletionSource<Tuple<Test, AssertionFailure>> src = new TaskCompletionSource<Tuple<Test, AssertionFailure>>();
+            lock (listeners)
+            {
+                listeners.Add(src);
+            }
+            var res = await src.Task;
+            if (res.Item1 == null)
+            {
+                return Json(new { op = 0 }); //All tests have finished executing
+            }
+            var test = res.Item1.UserData as E2ETest;
+            return Json(new { op = 1, id = test.ID }); //One test has finished executing.
+        }
+
+        [HttpPost]
+        public ActionResult GetTestInfo()
+        {
+            dynamic cmd = JSON;
+            //Get test information starting at ID
+            int startId = (int)cmd.id;
+            List<object> testData = new List<object>();
+            for (int i = startId; i < screenState.Tests.Count; i++)
+            {
+                var test = screenState.Tests[i];
+                testData.Add(new { completed = test.IsCompleted, errorMessage = test.ErrorMessage, id = test.ID });
+            }
+            return Json(new { testCount = screenState.SelectedTests.Count, completed = completionCount, list = testData });
         }
 
         private void ActiveRunner_onTestComplete(Test test, AssertionFailure failure)

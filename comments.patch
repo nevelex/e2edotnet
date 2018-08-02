@@ -1,0 +1,128 @@
+diff --git a/E2EDotNet/Controllers/HomeController.cs b/E2EDotNet/Controllers/HomeController.cs
+index 36d068e..968b587 100644
+--- a/E2EDotNet/Controllers/HomeController.cs
++++ b/E2EDotNet/Controllers/HomeController.cs
+@@ -92,7 +92,7 @@ namespace E2EDotNet.Controllers
+                             completionCount = 0;
+                             ActiveRunner.Run(screenState.SelectedTests.Select(m => m.Test));
+                         }
+-                        catch (System.Threading.ThreadAbortException er)
++                        catch (System.Threading.ThreadAbortException)
+                         {
+                             System.Threading.Thread.ResetAbort();
+                         }
+diff --git a/E2EDotNet/Models/E2EModel.cs b/E2EDotNet/Models/E2EModel.cs
+index 1a8dfd7..6858bcd 100644
+--- a/E2EDotNet/Models/E2EModel.cs
++++ b/E2EDotNet/Models/E2EModel.cs
+@@ -1,3 +1,4 @@
++// #pstein: Need copyright header
+ ﻿#if DEBUG || E2E
+ using System;
+ using System.Collections.Generic;
+@@ -59,10 +60,11 @@ namespace E2EDotNet.Models
+         /// </summary>
+         public E2EScreen()
+         {
++// #pstein: What does eger mean? Wouldn't this make more sense being called 'id' or 'testID'?
+             int eger = 0;
+             Tests = TestRunner.TestSuites.SelectMany(m => m.Tests.Select(a => new { Suite = m, Test = a })).Select(m => new E2ETest() { TestSuite = m.Suite, Name = m.Test.Name, Description = m.Test.Description, ID = eger++, Test = m.Test }.SetUserData()).ToList();
+             SelectedTests = new List<E2ETest>();
+         }
+     }
+ }
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/E2EDotNet/Test.html b/E2EDotNet/Test.html
+index 6eb68dd..6d78667 100644
+--- a/E2EDotNet/Test.html
++++ b/E2EDotNet/Test.html
+@@ -1,3 +1,4 @@
++# pstein: this file need not be here, right?
+ ﻿<!--
+ ============================================================================
+ Nevelex Proprietary
+@@ -29,4 +30,4 @@ Nevelex providing access to this software.
+         }
+     </script>
+ </body>
+-</html>
+\ No newline at end of file
++</html>
+diff --git a/E2EDotNet/Views/Home/Index.cshtml b/E2EDotNet/Views/Home/Index.cshtml
+index f65fe6c..9906d60 100644
+--- a/E2EDotNet/Views/Home/Index.cshtml
++++ b/E2EDotNet/Views/Home/Index.cshtml
+@@ -62,6 +62,7 @@ Nevelex providing access to this software.
+         <td>@test.Description</td>
+         <td><input type="checkbox" checked="checked" /></td>
+     </tr>
++#pstein: minor nit in formatting here, awkward that this close brace is not in same column as matching opening brace.
+ }
+ </table>
+ 
+@@ -76,6 +77,7 @@ Nevelex providing access to this software.
+     }
+ </div>
+ <select id="browserSelection">
++#pstein: As mentioned in the C# side, I'd much prefer value="chrome" here
+     <option value="0">Chrome</option>
+     <option value="4">Remote browser via Selenium wire protocol</option>
+ </select>
+@@ -85,6 +87,7 @@ Nevelex providing access to this software.
+ @section scripts {
+     <script type="text/javascript">
+         $(document).ready(function () {
++// #pstein: I don't have a problem with this, but isn't JQuery installed and wouldn't it simplify a bunch of the getElement*() calls here?
+             var browserSelection = document.getElementById('browserSelection');
+             var remoteHost = document.getElementById('remoteHost');
+             var enabledTests = {};
+@@ -102,6 +105,8 @@ Nevelex providing access to this software.
+             var i = 0;
+             for (var test = firstTest; test != null; test = test.nextSibling) {
+                 if (test.nodeType == Node.ELEMENT_NODE) {
++// #pstein: What am I missing here, the checkbox looks to me to be the fourth sibling... or do you also have to skip the whitespace between the TD elements?
++// #pstein: I would prefer either giving the checkbox an ID tag or using the queryBySelector to find td>input[type="checkbox"]
+                     test.testInfo = { id: i, enableCheckbox: test.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.firstChild }; //Would be nice if IE supported nextElementSibling
+                     i++;
+                 }
+@@ -109,6 +114,7 @@ Nevelex providing access to this software.
+             var highLevelStatus = document.getElementById('highLevelStatus');
+             var lastUpdatedID = 0;
+             var doLongPoll = function () {
++// #pstein: As mentioned in the code, use different actions rather than different 'op' integers (throughout)
+                 $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 2 })).done(function (data) {
+ 
+                     if (data.op == 0) {
+@@ -116,6 +122,7 @@ Nevelex providing access to this software.
+                         highLevelStatus.innerText = 'No tests are running.';
+                         isRunning = false;
+                         startStopBtn.value = 'Start tests';
++// #pstein: Why do a long poll if no tests are running? Do we expect someone else to run tests and the results to show on our browser, too?
+                         doLongPoll();
+                         return;
+                     }
+@@ -154,6 +161,7 @@ Nevelex providing access to this software.
+                         }
+                     });
+                     doLongPoll();
++// #pstein: can this be a 'finally' instead of a catch' and eliminate having to call doLongPoll() in every return path above?
+                 }).catch(function () {
+                     doLongPoll();
+                 });
+@@ -178,6 +186,7 @@ Nevelex providing access to this software.
+                     }
+                     testCount = tests.length;
+                     highLevelStatus.innerText = 'Completed 0 of ' + testCount;
++// #pstein: Assuming you change the browser selection to a string instead, then you'll have to not OR it with 0 here to cast to int.
+                     $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 0, tests: tests, browser: browserSelection.value | 0, host: remoteHost.value }));
+                     startStopBtn.value = 'Stop tests';
+                     isRunning = true;
+@@ -185,4 +194,4 @@ Nevelex providing access to this software.
+             };
+         });
+     </script>
+-}
+\ No newline at end of file
++}

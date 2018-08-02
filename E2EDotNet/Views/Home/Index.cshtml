@@ -60,10 +60,11 @@ Nevelex providing access to this software.
             }
         </td>
         <td>@test.Description</td>
-        <td><input type="checkbox" checked="checked" /></td>
+        <td><input type="checkbox" checked="checked" class="testCheckbox" /></td>
     </tr>
-#pstein: minor nit in formatting here, awkward that this close brace is not in same column as matching opening brace.
-}
+        //#pstein: minor nit in formatting here, awkward that this close brace is not in same column as matching opening brace.
+        // REPLY (bbosak): Fixed.
+    }
 </table>
 
 <div id="highLevelStatus">
@@ -78,8 +79,8 @@ Nevelex providing access to this software.
 </div>
 <select id="browserSelection">
 #pstein: As mentioned in the C# side, I'd much prefer value="chrome" here
-    <option value="0">Chrome</option>
-    <option value="4">Remote browser via Selenium wire protocol</option>
+    <option value="Chrome">Chrome</option>
+    <option value="Remote">Remote browser via Selenium wire protocol</option>
 </select>
 <input type="text" id="remoteHost" style="display:none" />
 <input type="button" value="Start tests" id="startStopBtn" />
@@ -88,8 +89,9 @@ Nevelex providing access to this software.
     <script type="text/javascript">
         $(document).ready(function () {
 // #pstein: I don't have a problem with this, but isn't JQuery installed and wouldn't it simplify a bunch of the getElement*() calls here?
-            var browserSelection = document.getElementById('browserSelection');
-            var remoteHost = document.getElementById('remoteHost');
+            //REPLY (bbosak): Fixed.
+            var browserSelection = $('#browserSelection')[0];
+            var remoteHost = $('#remoteHost')[0];
             var enabledTests = {};
             browserSelection.onchange = function () {
                 if (browserSelection.value == '4') {
@@ -100,22 +102,24 @@ Nevelex providing access to this software.
             };
             var isRunning = @(Model.IsRunning ? "true" : "false");
             var testCount = @Model.SelectedTests.Count;
-            var startStopBtn = document.getElementById('startStopBtn');
-            var firstTest = document.getElementById('test_0');
+            var startStopBtn = $('#startStopBtn')[0];
+            var firstTest = $('#test_0')[0];
             var i = 0;
             for (var test = firstTest; test != null; test = test.nextSibling) {
                 if (test.nodeType == Node.ELEMENT_NODE) {
 // #pstein: What am I missing here, the checkbox looks to me to be the fourth sibling... or do you also have to skip the whitespace between the TD elements?
-// #pstein: I would prefer either giving the checkbox an ID tag or using the queryBySelector to find td>input[type="checkbox"]
-                    test.testInfo = { id: i, enableCheckbox: test.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.firstChild }; //Would be nice if IE supported nextElementSibling
+                    // #pstein: I would prefer either giving the checkbox an ID tag or using the queryBySelector to find td>input[type="checkbox"]
+                    // REPLY (bbosak): Fixed. Gave the checkboxes a class that can be jQueried.
+                    test.testInfo = { id: i, enableCheckbox: $(test).find('.testCheckbox')[0] };
                     i++;
                 }
             }
-            var highLevelStatus = document.getElementById('highLevelStatus');
+            var highLevelStatus = $('#highLevelStatus')[0];
             var lastUpdatedID = 0;
             var doLongPoll = function () {
 // #pstein: As mentioned in the code, use different actions rather than different 'op' integers (throughout)
-                $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 2 })).done(function (data) {
+                // REPLY (bbosak): Fixed.
+                $.post('@Url.Action("LongPoll")').done(function (data) {
 
                     if (data.op == 0) {
                         //All tests complete
@@ -123,17 +127,17 @@ Nevelex providing access to this software.
                         isRunning = false;
                         startStopBtn.value = 'Start tests';
 // #pstein: Why do a long poll if no tests are running? Do we expect someone else to run tests and the results to show on our browser, too?
-                        doLongPoll();
+                        // REPLY (bbosak): Fixed.
                         return;
                     }
-                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 3, id: lastUpdatedID }), function (data) {
+                    $.post('@Url.Action("GetTestInfo")', JSON.stringify({ id: lastUpdatedID }), function (data) {
                         var completed = data.completed;
                         testCount = data.testCount;
                         var list = data.list;
                         for (var i = 0; i < list.length; i++) {
                             var test = list[i];
                             if (test.completed) {
-                                var elem = document.getElementById('test_status_' + test.id);
+                                var elem = $('#test_status_' + test.id)[0];
                                 elem.innerHTML = '';
                                 if (test.errorMessage) {
                                     elem.style.color = 'red';
@@ -160,16 +164,17 @@ Nevelex providing access to this software.
                             }
                         }
                     });
-                    doLongPoll();
 // #pstein: can this be a 'finally' instead of a catch' and eliminate having to call doLongPoll() in every return path above?
-                }).catch(function () {
-                    doLongPoll();
+                    // REPLY (bbosak): Fixed.
+                }).always(function () {
+                    if (isRunning) {
+                        doLongPoll();
+                    }
                 });
             };
-            doLongPoll();
             startStopBtn.onclick = function () {
                 if (isRunning) {
-                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 1 }));
+                    $.post('@Url.Action("AbortTests")');
                     startStopBtn.value = 'Start tests';
                     isRunning = false;
                 } else {
@@ -186,8 +191,9 @@ Nevelex providing access to this software.
                     }
                     testCount = tests.length;
                     highLevelStatus.innerText = 'Completed 0 of ' + testCount;
-// #pstein: Assuming you change the browser selection to a string instead, then you'll have to not OR it with 0 here to cast to int.
-                    $.post('@Url.Action("PerformAction")', JSON.stringify({ op: 0, tests: tests, browser: browserSelection.value | 0, host: remoteHost.value }));
+                    // #pstein: Assuming you change the browser selection to a string instead, then you'll have to not OR it with 0 here to cast to int.
+                    doLongPoll();
+                    $.post('@Url.Action("RunTests")', JSON.stringify({ tests: tests, browser: browserSelection.value, host: remoteHost.value }));
                     startStopBtn.value = 'Stop tests';
                     isRunning = true;
                 }
