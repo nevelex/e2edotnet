@@ -135,6 +135,7 @@ namespace E2EDotNet.Controllers
         [HttpPost]
         public ActionResult AbortTests()
         {
+            // #jcass: testThread is not guaranteed to be non-null here if it's called while the test isn't running
             testThread.Abort();
             return Json("OK");
         }

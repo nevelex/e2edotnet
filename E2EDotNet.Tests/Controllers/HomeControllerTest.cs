@@ -35,6 +35,10 @@ namespace E2EDotNet.Tests.Controllers
         /// </summary>
         public class JsonListResponse
         {
+            // #jcass: more of an FYI as I don't particularly care, but it looks like you can use the
+            // [JsonProperty(PropertyName = "XXX")] annotation to serialize the C# property name to a different JSON name
+            // Could be something useful for the future at least.
+
             //NOTE: We've had to violate some C# naming conventions here to get a strongly-typed JSON object matching the JSON schema,
             //whose conventions defer from C# conventions.
             public class TestInfo
