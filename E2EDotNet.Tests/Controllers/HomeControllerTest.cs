@@ -38,18 +38,22 @@ namespace E2EDotNet.Tests.Controllers
             // #jcass: more of an FYI as I don't particularly care, but it looks like you can use the
             // [JsonProperty(PropertyName = "XXX")] annotation to serialize the C# property name to a different JSON name
             // Could be something useful for the future at least.
-
-            //NOTE: We've had to violate some C# naming conventions here to get a strongly-typed JSON object matching the JSON schema,
-            //whose conventions defer from C# conventions.
+            // REPLY (bbosak): Fixed.
             public class TestInfo
             {
-                public bool completed { get; set; }
-                public string errorMessage { get; set; }
-                public int id { get; set; }
+                [JsonProperty(PropertyName ="completed")]
+                public bool Completed { get; set; }
+                [JsonProperty(PropertyName = "errorMessage")]
+                public string ErrorMessage { get; set; }
+                [JsonProperty(PropertyName = "id")]
+                public int ID { get; set; }
             }
-            public int testCount { get; set; }
-            public int completed { get; set; }
-            public TestInfo[] list { get; set; }
+            [JsonProperty(PropertyName ="testCount")]
+            public int TestCount { get; set; }
+            [JsonProperty(PropertyName = "completed")]
+            public int Completed { get; set; }
+            [JsonProperty(PropertyName = "list")]
+            public TestInfo[] List { get; set; }
         }
         [TestMethod]
         public void Index()
@@ -95,19 +99,19 @@ namespace E2EDotNet.Tests.Controllers
             // Assert
             Assert.IsTrue(eventListener.IsCompleted);
             var res = JsonConvert.DeserializeObject<JsonListResponse>(JsonConvert.SerializeObject((eventListener.Result as JsonResult).Data));
-            Assert.AreEqual(2, res.testCount);
-            Assert.AreEqual(2, res.completed);
+            Assert.AreEqual(2, res.TestCount);
+            Assert.AreEqual(2, res.Completed);
 
             //Verify test 0
-            Assert.IsTrue(res.list[0].completed);
-            Assert.IsNull(res.list[0].errorMessage);
+            Assert.IsTrue(res.List[0].Completed);
+            Assert.IsNull(res.List[0].ErrorMessage);
 
             //Verify test 2
-            Assert.IsTrue(res.list[2].completed);
-            Assert.IsNotNull(res.list[2].errorMessage);
+            Assert.IsTrue(res.List[2].Completed);
+            Assert.IsNotNull(res.List[2].ErrorMessage);
 
             //Verify that no other tests have ran
-            Assert.AreEqual(2, res.list.Where(m => m.completed).Count());
+            Assert.AreEqual(2, res.List.Where(m => m.Completed).Count());
         }
         
     }

@@ -136,7 +136,9 @@ namespace E2EDotNet.Controllers
         public ActionResult AbortTests()
         {
             // #jcass: testThread is not guaranteed to be non-null here if it's called while the test isn't running
-            testThread.Abort();
+            // REPLY (bbosak): Sort of fixed. Still could get set to null at the same time this is executing, but don't think it's a big deal,
+            //because at worst this would return HTTP 500 on exception, and it's unlikely for this to happen. (we're stripping out this code in production anyways, so it would only ever likely be a single tester running this at a time)
+            testThread?.Abort();
             return Json("OK");
         }
         // #pstein: Would like to see GetTestInfo() and LongPoll() folded together so that LongPoll() returns results of tests completed since passed in startID.
