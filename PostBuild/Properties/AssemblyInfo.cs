@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PostBuild")]
-[assembly: AssemblyDescription("")] // #pstein: add description
+[assembly: AssemblyDescription("Post Build scripts for E2E tests")] // #pstein: add description // REPLY (bbosak): Fixed.
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")] // #pstein: Add Nevelex Corporation
+[assembly: AssemblyCompany("Nevelex Corporation")] // #pstein: Add Nevelex Corporation //REPLY (bbosak): Fixed.
 [assembly: AssemblyProduct("PostBuild")]
-[assembly: AssemblyCopyright("Copyright ©  2018")] // #pstein: Add Nevelex Corporation
+[assembly: AssemblyCopyright("Copyright © Nevelex Corporation 2018")] // #pstein: Add Nevelex Corporation //REPLY (bbosak): Fixed.
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

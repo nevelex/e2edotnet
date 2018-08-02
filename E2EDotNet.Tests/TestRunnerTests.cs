@@ -11,13 +11,17 @@ agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using E2ETestRunner; // #pstein: extraneous
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
 using System;
 using System.Collections.Generic;
-using System.Linq;	
-using System.Text; // #pstein: extraneous
-using System.Threading.Tasks; // #pstein: extraneous
-using Moq; // #pstein: extraneous
+using System.Linq;
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
 namespace E2ETestRunner.Tests
 {
     

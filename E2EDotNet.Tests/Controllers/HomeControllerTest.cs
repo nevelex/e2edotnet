@@ -11,13 +11,16 @@ agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
 
-using System; // #pstein: extraneous
-using System.Collections.Generic; // #pstein: extraneous
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using E2EDotNet; // #pstein: extraneous
+// #pstein: extraneous
+// REPLY (bbosak): Fixed.
 using E2EDotNet.Controllers;
 using Moq;
 using System.IO;
@@ -66,26 +69,28 @@ namespace E2EDotNet.Tests.Controllers
             var contextMock = new Mock<System.Web.HttpContextBase>();
             var requestMock = new Mock<System.Web.HttpRequestBase>();
             requestMock.Setup(m => m.InputStream).Returns(new MemoryStream(Encoding.UTF8.GetBytes(content)));
+            requestMock.Setup(m => m.Url).Returns(new System.Uri("http://127.0.0.1"));
             contextMock.Setup(m => m.Request).Returns(requestMock.Object);
             return contextMock.Object;
         }
 
         // #pstein: No longer a useful name for this test.. probably RunTestsAndGetResults
+        // REPLY (bbosak): Fixed.
         [TestMethod]
-        public void PerformAction()
+        public void RunTestsAndGetResults()
         {
             // Arrange
             HomeController controller = new HomeController();
             controller.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"browser\":\"UnitTests\",\"tests\":[0,2]}") };
             HomeController listeningController = new HomeController();
+            listeningController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{id:-1}") };
             HomeController resultsController = new HomeController();
-            resultsController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{id:0}") };
             // Act
-            var eventListener = listeningController.LongPoll();
             controller.RunTests();
-            var res = JsonConvert.DeserializeObject<JsonListResponse>(JsonConvert.SerializeObject((resultsController.GetTestInfo() as JsonResult).Data));
+            var eventListener = listeningController.LongPoll();
             // Assert
             Assert.IsTrue(eventListener.IsCompleted);
+            var res = JsonConvert.DeserializeObject<JsonListResponse>(JsonConvert.SerializeObject((eventListener.Result as JsonResult).Data));
             Assert.AreEqual(2, res.testCount);
             Assert.AreEqual(2, res.completed);
 

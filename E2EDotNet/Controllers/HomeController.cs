@@ -28,22 +28,44 @@ namespace E2EDotNet.Controllers
     /// </summary>
     public class HomeController : Controller
     {
+        public class RunTestsCommand
+        {
+            /// <summary>
+            /// The test IDs to run
+            /// </summary>
+            public List<int> tests { get; set; }
+            /// <summary>
+            /// The browser to run the tests in
+            /// </summary>
+            public string browser { get; set; }
+            /// <summary>
+            /// URL for running remote tests
+            /// </summary>
+            public string host { get; set; }
+        }
+        public class LongPollCommand
+        {
+            /// <summary>
+            /// The last ref from the client
+            /// </summary>
+            public int id { get; set; }
+        }
         static TestRunner ActiveRunner; //Active E2E test runner
         static List<TaskCompletionSource<Tuple<Test, AssertionFailure>>> listeners = new List<TaskCompletionSource<Tuple<Test, AssertionFailure>>>(); //event listeners for E2E completion notifications
         static E2EScreen screenState = new E2EScreen(); //E2E screen state (singleton, we can only have one test suite executing at a time)
         static int completionCount = 0; //Number of tests completed in this run
-        /// <summary>
-        /// Retrieves the JSON for the current request
-        /// </summary>
 	    // #pstein: Is there a compelling reason not to use statically typed JSON? Future-compatibility, maybe? I dunno.
-        dynamic JSON
+        // REPLY (bbosak): Fixed.
+        /// <summary>
+        /// Retrieves strongly-typed JSON for the current request
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize the JSON into</typeparam>
+        /// <returns></returns>
+        T GetJSON<T>()
         {
-            get
+            using (StreamReader reader = new StreamReader(Request.InputStream))
             {
-                using (StreamReader reader = new StreamReader(Request.InputStream))
-                {
-                    return JsonConvert.DeserializeObject(reader.ReadToEnd());
-                }
+                return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
             }
         }
         // GET: E2E
@@ -56,39 +78,42 @@ namespace E2EDotNet.Controllers
         [HttpPost]
         public ActionResult RunTests()
         {
-            dynamic cmd = JSON;
+            var cmd = GetJSON<RunTestsCommand>();
             //Run tests
             try
             {
                 testThread = System.Threading.Thread.CurrentThread;
+                string url = $"http{(Request.IsSecureConnection ? "s" : "")}://{Request.Url.DnsSafeHost}:{Request.Url.Port}";
                 switch (cmd.browser.ToString())
                 {
-		    // #pstein: all of these cases generate the same URL, would like to see that done once before or in a function... and with string interpolation if reasonable.
+                    // #pstein: all of these cases generate the same URL, would like to see that done once before or in a function... and with string interpolation if reasonable.
+                    // REPLY (bbosak): Fixed.
                     case "Chrome":
-                        ActiveRunner = new ChromeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        ActiveRunner = new ChromeTestRunner(url);
                         break;
                     case "Firefox":
-                        ActiveRunner = new FirefoxTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        ActiveRunner = new FirefoxTestRunner(url);
                         break;
                     case "IE":
-                        ActiveRunner = new IETestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        ActiveRunner = new IETestRunner(url);
                         break;
                     case "Edge":
-                        ActiveRunner = new EdgeTestRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port);
+                        ActiveRunner = new EdgeTestRunner(url);
                         break;
                     case "Remote":
-                        ActiveRunner = new RemoteRunner("http" + (Request.IsSecureConnection ? "s" : "") + "://" + Request.Url.DnsSafeHost + ":" + Request.Url.Port, cmd.host.ToString());
+                        ActiveRunner = new RemoteRunner(url, cmd.host);
                         break;
                     case "UnitTests":
                         ActiveRunner = new TestTestRunner();
                         break;
                     default:
-		    // #pstein: Should be Json("InvalidBrowserID") or something
-                        return Content("Invalid browser ID");
+                        // #pstein: Should be Json("InvalidBrowserID") or something
+                        // REPLY (bbosak): Fixed.
+                        return Json("InvalidBrowserId");
                 }
-                screenState.SelectedTests = (cmd.tests as Newtonsoft.Json.Linq.JArray).Select(m => screenState.Tests[(int)m]).ToList();
+                screenState.SelectedTests = cmd.tests.Select(m => screenState.Tests[m]).ToList();
                 screenState.IsRunning = true;
-                ActiveRunner.OnTestComplete += ActiveRunner_onTestComplete;
+                ActiveRunner.OnTestComplete += ActiveRunner_OnTestComplete;
                 completionCount = 0;
                 ActiveRunner.Run(screenState.SelectedTests.Select(m => m.Test));
             }
@@ -102,8 +127,9 @@ namespace E2EDotNet.Controllers
             ActiveRunner?.Dispose();
             ActiveRunner = null;
             NotifyListeners(null, null);
-	    // #pstein: I think this should be Json("Complete"). All other methods here return JSON
-            return Content("Complete");
+            // #pstein: I think this should be Json("Complete"). All other methods here return JSON
+            // REPLY (bbosak): Fixed.
+            return Json("Complete");
         }
 
         [HttpPost]
@@ -112,45 +138,46 @@ namespace E2EDotNet.Controllers
             testThread.Abort();
             return Json("OK");
         }
-
-        [HttpPost]
-        public async Task<ActionResult> LongPoll()
+        // #pstein: Would like to see GetTestInfo() and LongPoll() folded together so that LongPoll() returns results of tests completed since passed in startID.
+        // REPLY (bbosak): Fixed?
+        ActionResult GetTestInfo(int startId)
         {
-            //Long poll for results
-            TaskCompletionSource<Tuple<Test, AssertionFailure>> src = new TaskCompletionSource<Tuple<Test, AssertionFailure>>();
-            lock (listeners)
-            {
-                listeners.Add(src);
-            }
-            var res = await src.Task;
-            if (res.Item1 == null)
-            {
-	    // #pstein: Would rather see something other than integer 'op'
-	    // #pstein: Would like to see GetTestInfo() and LongPoll() folded together so that LongPoll() returns results of tests completed since passed in startID.
-                return Json(new { op = 0 }); //All tests have finished executing
-            }
-            var test = res.Item1.UserData as E2ETest;
-	    // #pstein: Would rather see something other than integer 'op'
-            return Json(new { op = 1, id = test.ID }); //One test has finished executing.
-        }
-
-        [HttpPost]
-        public ActionResult GetTestInfo()
-        {
-            dynamic cmd = JSON;
-            //Get test information starting at ID
-            int startId = (int)cmd.id;
             List<object> testData = new List<object>();
             for (int i = startId; i < screenState.Tests.Count; i++)
             {
                 var test = screenState.Tests[i];
                 testData.Add(new { completed = test.IsCompleted, errorMessage = test.ErrorMessage, id = test.ID });
             }
-            return Json(new { testCount = screenState.SelectedTests.Count, completed = completionCount, list = testData });
+            // #pstein: Would rather see something other than integer 'op'
+            var retval = new { allCompleted = false, completed = completionCount, testCount = screenState.SelectedTests.Count, list = testData };
+            if (completionCount == screenState.SelectedTests.Count)
+            {
+                completionCount = 0;
+            }
+            return Json(retval); //One test has finished executing.
+        }
+        [HttpPost]
+        public async Task<ActionResult> LongPoll()
+        {
+            var cmd = GetJSON<LongPollCommand>();
+            //Long poll for results
+            TaskCompletionSource<Tuple<Test, AssertionFailure>> src = new TaskCompletionSource<Tuple<Test, AssertionFailure>>();
+            lock (listeners)
+            {
+                listeners.Add(src);
+            }
+                if (completionCount>cmd.id+1)
+                {
+                    return GetTestInfo(cmd.id+1);
+                }
+            
+            await src.Task;
+            return GetTestInfo(cmd.id+1);
         }
 
 // #pstein: Is this standarad practice or should the 'O' be capitalized?
-        private void ActiveRunner_onTestComplete(Test test, AssertionFailure failure)
+// REPLY (bbosak): Mismatch between event name and method name. Fixed.
+        private void ActiveRunner_OnTestComplete(Test test, AssertionFailure failure)
         {
             var e2etest = test.UserData as E2ETest;
             e2etest.IsCompleted = true;
