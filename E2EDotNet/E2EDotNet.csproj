@@ -269,6 +269,7 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>PostBuild.exe "$(ConfigurationName)"
+
 del PostBuild.exe</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets" Condition="Exists('..\packages\Selenium.Chrome.WebDriver.2.40\build\Selenium.Chrome.WebDriver.targets')" />
