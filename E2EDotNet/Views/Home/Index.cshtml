@@ -62,8 +62,6 @@ Nevelex providing access to this software.
         <td>@test.Description</td>
         <td><input type="checkbox" checked="checked" class="testCheckbox" /></td>
     </tr>
-        //#pstein: minor nit in formatting here, awkward that this close brace is not in same column as matching opening brace.
-        // REPLY (bbosak): Fixed.
     }
 </table>
 
@@ -178,8 +176,6 @@ Nevelex providing access to this software.
                     }
                     testCount = tests.length;
                     highLevelStatus.innerText = 'Completed 0 of ' + testCount;
-                    // #pstein: Assuming you change the browser selection to a string instead, then you'll have to not OR it with 0 here to cast to int.
-                    // REPLY (bbosak): Fixed.
                     doLongPoll();
                     $.post('@Url.Action("RunTests")', JSON.stringify({ tests: tests, browser: browserSelection.value, host: remoteHost.value }));
                     startStopBtn.value = 'Stop tests';

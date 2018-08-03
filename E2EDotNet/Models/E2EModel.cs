@@ -10,8 +10,6 @@ in whole or in part, must comply with the terms of the license
 agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
-// #pstein: Need copyright header
-// REPLY (bbosak): Fixed.
 #if DEBUG || E2E
 using System;
 using System.Collections.Generic;
@@ -73,8 +71,6 @@ namespace E2EDotNet.Models
         /// </summary>
         public E2EScreen()
         {
-// #pstein: What does eger mean? Wouldn't this make more sense being called 'id' or 'testID'?
-// REPLY (bbosak): Fixed.
             int id = 0;
             Tests = TestRunner.TestSuites.SelectMany(m => m.Tests.Select(a => new { Suite = m, Test = a })).Select(m => new E2ETest() { TestSuite = m.Suite, Name = m.Test.Name, Description = m.Test.Description, ID = id++, Test = m.Test }.SetUserData()).ToList();
             SelectedTests = new List<E2ETest>();

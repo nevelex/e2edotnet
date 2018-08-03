@@ -54,8 +54,6 @@ namespace E2EDotNet.Controllers
         static List<TaskCompletionSource<Tuple<Test, AssertionFailure>>> listeners = new List<TaskCompletionSource<Tuple<Test, AssertionFailure>>>(); //event listeners for E2E completion notifications
         static E2EScreen screenState = new E2EScreen(); //E2E screen state (singleton, we can only have one test suite executing at a time)
         static int completionCount = 0; //Number of tests completed in this run
-	    // #pstein: Is there a compelling reason not to use statically typed JSON? Future-compatibility, maybe? I dunno.
-        // REPLY (bbosak): Fixed.
         /// <summary>
         /// Retrieves strongly-typed JSON for the current request
         /// </summary>
@@ -86,8 +84,6 @@ namespace E2EDotNet.Controllers
                 string url = $"http{(Request.IsSecureConnection ? "s" : "")}://{Request.Url.DnsSafeHost}:{Request.Url.Port}";
                 switch (cmd.browser.ToString())
                 {
-                    // #pstein: all of these cases generate the same URL, would like to see that done once before or in a function... and with string interpolation if reasonable.
-                    // REPLY (bbosak): Fixed.
                     case "Chrome":
                         ActiveRunner = new ChromeTestRunner(url);
                         break;
@@ -107,8 +103,6 @@ namespace E2EDotNet.Controllers
                         ActiveRunner = new TestTestRunner();
                         break;
                     default:
-                        // #pstein: Should be Json("InvalidBrowserID") or something
-                        // REPLY (bbosak): Fixed.
                         return Json("InvalidBrowserId");
                 }
                 screenState.SelectedTests = cmd.tests.Select(m => screenState.Tests[m]).ToList();
@@ -127,8 +121,6 @@ namespace E2EDotNet.Controllers
             ActiveRunner?.Dispose();
             ActiveRunner = null;
             NotifyListeners(null, null);
-            // #pstein: I think this should be Json("Complete"). All other methods here return JSON
-            // REPLY (bbosak): Fixed.
             return Json("Complete");
         }
 
@@ -138,8 +130,7 @@ namespace E2EDotNet.Controllers
             testThread?.Abort();
             return Json("OK");
         }
-        // #pstein: Would like to see GetTestInfo() and LongPoll() folded together so that LongPoll() returns results of tests completed since passed in startID.
-        // REPLY (bbosak): Fixed?
+
         ActionResult GetTestInfo(int startId)
         {
             List<object> testData = new List<object>();
@@ -148,14 +139,16 @@ namespace E2EDotNet.Controllers
                 var test = screenState.Tests[i];
                 testData.Add(new { completed = test.IsCompleted, errorMessage = test.ErrorMessage, id = test.ID });
             }
-            // #pstein: Would rather see something other than integer 'op'
+            // #pstein: shouldn't the allCompleted here be true when completionCount == SelectedTests.Count()?
             var retval = new { allCompleted = false, completed = completionCount, testCount = screenState.SelectedTests.Count, list = testData };
             if (completionCount == screenState.SelectedTests.Count)
             {
+                // #pstein: Why is this getting reset here?
                 completionCount = 0;
             }
             return Json(retval); //One test has finished executing.
         }
+
         [HttpPost]
         public async Task<ActionResult> LongPoll()
         {
@@ -166,17 +159,15 @@ namespace E2EDotNet.Controllers
             {
                 listeners.Add(src);
             }
-                if (completionCount>cmd.id+1)
-                {
-                    return GetTestInfo(cmd.id+1);
-                }
-            
+            if (completionCount>cmd.id+1)
+            {
+                return GetTestInfo(cmd.id+1);
+            }
+
             await src.Task;
             return GetTestInfo(cmd.id+1);
         }
 
-// #pstein: Is this standarad practice or should the 'O' be capitalized?
-// REPLY (bbosak): Mismatch between event name and method name. Fixed.
         private void ActiveRunner_OnTestComplete(Test test, AssertionFailure failure)
         {
             var e2etest = test.UserData as E2ETest;

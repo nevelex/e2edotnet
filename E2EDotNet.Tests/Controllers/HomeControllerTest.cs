@@ -11,16 +11,10 @@ agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
 
-// #pstein: extraneous
-// REPLY (bbosak): Fixed.
-// #pstein: extraneous
-// REPLY (bbosak): Fixed.
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// #pstein: extraneous
-// REPLY (bbosak): Fixed.
 using E2EDotNet.Controllers;
 using Moq;
 using System.IO;
@@ -37,6 +31,7 @@ namespace E2EDotNet.Tests.Controllers
         {
             public class TestInfo
             {
+// #pstein: might be nice to do this in the HomeController, too. But, up to you.
                 [JsonProperty(PropertyName = "completed")]
                 public bool Completed { get; set; }
                 [JsonProperty(PropertyName = "errorMessage")]
@@ -78,8 +73,6 @@ namespace E2EDotNet.Tests.Controllers
             return contextMock.Object;
         }
 
-        // #pstein: No longer a useful name for this test.. probably RunTestsAndGetResults
-        // REPLY (bbosak): Fixed.
         [TestMethod]
         public void RunTestsAndGetResults()
         {
@@ -109,6 +102,6 @@ namespace E2EDotNet.Tests.Controllers
             //Verify that no other tests have ran
             Assert.AreEqual(2, res.List.Where(m => m.Completed).Count());
         }
-        
+
     }
 }
