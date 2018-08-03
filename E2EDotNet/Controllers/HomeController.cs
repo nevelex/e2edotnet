@@ -143,13 +143,9 @@ namespace E2EDotNet.Controllers
                 var test = screenState.Tests[i];
                 testData.Add(new { completed = test.IsCompleted, errorMessage = test.ErrorMessage, id = test.ID });
             }
-            // #pstein: shouldn't the allCompleted here be true when completionCount == SelectedTests.Count()?
-            // REPLY (bbosak): Not using that anymore. Got rid of it now.
             var retval = new { completed = completionCount, testCount = screenState.SelectedTests.Count, list = testData };
             if (completionCount == screenState.SelectedTests.Count)
             {
-                // #pstein: Why is this getting reset here?
-                // REPLY (bbosak): Fix for race condition where LongPoll is called before the start of the next test round.
                 completionCount = 0;
             }
             return Json(retval); //One test has finished executing.
