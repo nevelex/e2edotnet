@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace E2ETestRunner.Tests
 {
+// #pstein: Could you have left these were they were before and just used the SampleTestRunner assembly on the testSuites = line below? Or is it tough to cross compilation units like that?
     [TestSuite("Sample test suite for unit testing")]
     public class SampleTestSuite
     {
