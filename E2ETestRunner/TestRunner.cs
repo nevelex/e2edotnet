@@ -31,7 +31,7 @@ namespace E2ETestRunner
     /// <summary>
     /// A test suite
     /// </summary>
-    internal class TestSuiteAttribute:Attribute
+    public class TestSuiteAttribute:Attribute
     {
         /// <summary>
         /// Optional URL for the test suite. If not specified, the URL which was previously loaded in the browser will stay.
@@ -49,7 +49,7 @@ namespace E2ETestRunner
     /// <summary>
     /// A test
     /// </summary>
-    internal class TestAttribute:Attribute
+    public class TestAttribute:Attribute
     {
         /// <summary>
         /// The name of the test
@@ -172,7 +172,7 @@ namespace E2ETestRunner
         /// Navigates to the specified URL relative to the root of the website
         /// </summary>
         /// <param name="url">The URL to navigate to</param>
-        internal void Navigate(string url)
+        public void Navigate(string url)
         {
             driver.Navigate().GoToUrl(baseURL+"/"+url);
             
@@ -183,7 +183,7 @@ namespace E2ETestRunner
         /// <param name="text">The script to execute. MUST call done when finished.</param>
         /// <param name="args">Arguments to pass to the JavaScript code. Must not be null.</param>
         /// <returns></returns>
-        internal object InjectScript(string text, params object[] args)
+        public object InjectScript(string text, params object[] args)
         {
             string txt = $"var done = arguments[{args.Length}];\n{text}";
             return driver.ExecuteAsyncScript(txt, args);
@@ -193,7 +193,7 @@ namespace E2ETestRunner
         /// </summary>
         /// <param name="bye">The criterion to match by</param>
         /// <returns></returns>
-        internal IReadOnlyCollection<IWebElement> FindElements(By bye /*By(e) bye...*/)
+        public IReadOnlyCollection<IWebElement> FindElements(By bye /*By(e) bye...*/)
         {
             return driver.FindElements(bye);
         }

@@ -81,7 +81,7 @@ namespace E2EDotNet.Models
         /// </summary>
         public E2EScreen()
         {
-            SetTestsFromSuites(TestRunner.TestSuites);
+            SetTestsFromSuites(TestRunner.GetSuitesForAssembly(typeof(E2EScreen).Assembly));
             SelectedTests = new List<E2ETest>();
         }
     }
