@@ -100,6 +100,18 @@ namespace E2ETestRunner
             return method.GetCustomAttribute<T>() != null;
         }
     }
+
+    /// <summary>
+    /// Test runner for unit tests
+    /// </summary>
+    public class TestTestRunner : TestRunner
+    {
+        public TestTestRunner() : base(null)
+        {
+
+        }
+    }
+
     /// <summary>
     /// A test runner that permits the execution of tests for a particular web browser
     /// </summary>

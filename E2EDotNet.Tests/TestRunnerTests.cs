@@ -11,51 +11,21 @@ agreement, nondisclosure agreement or contract entered into with
 Nevelex providing access to this software.
 ==============================================================================*/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using E2ETestRunner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace E2ETestRunner.Tests
 {
-    [TestSuite("Sample test suite")]
-    public class SampleTestSuite
-    {
-        [Test("Passing test",Description ="Test passes")]
-        public void PassingTest(TestRunner runner)
-        {
-
-        }
-        [Test("Failing test")]
-        public void FailingTest(TestRunner runner)
-        {
-            throw new Exception("test message");
-        }
-        [Test("Assertion failure test")]
-        public void AssertionFailure(TestRunner runner)
-        {
-            throw new AssertionFailure("test");
-        }
-
-
-    }
+    
     [TestClass()]
     public class TestRunnerTests
     {
-        public class TestTestRunner : TestRunner
-        {
-            public TestTestRunner():base(null)
-            {
-
-            }
-        }
         [TestMethod()]
         public void RunTest()
         {
             //arrange
             var runner = new TestTestRunner();
-            var testSuites = TestRunner.GetSuitesForAssembly(typeof(TestRunnerTests).Assembly);
+            var testSuites = TestRunner.TestSuites.Take(1);
             var tests = testSuites.SelectMany(m => m.Tests).ToList();
             Dictionary<Test, AssertionFailure> results = new Dictionary<Test, AssertionFailure>();
             //act
@@ -66,7 +36,7 @@ namespace E2ETestRunner.Tests
             //assert
             
             //First test (passing)
-            Assert.AreEqual(testSuites.First().Name, "Sample test suite");
+            Assert.AreEqual(testSuites.First().Name, "Sample test suite for unit testing");
             Assert.AreEqual(tests[0].Name, "Passing test");
             Assert.AreEqual(tests[0].Description, "Test passes");
             Assert.AreEqual(results[tests[0]], null);

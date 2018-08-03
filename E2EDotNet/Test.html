@@ -1,0 +1,32 @@
+<!--
+============================================================================
+Nevelex Proprietary
+Copyright 2018 Nevelex Corporation
+UNPUBLISHED WORK
+ALL RIGHTS RESERVED
+This software is the confidential and proprietary information of
+Nevelex Corporation ("Proprietary Information"). Any use, reproduction,
+distribution or disclosure of the software or Proprietary Information,
+in whole or in part, must comply with the terms of the license
+agreement, nondisclosure agreement or contract entered into with
+Nevelex providing access to this software.
+==============================================================================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Test page</title>
+</head>
+<body>
+    <script type="text/javascript">
+        function makeUserClickButton(callBach) {
+            var btn = document.createElement('input');
+            btn.type = 'button';
+            btn.value = 'Click me to complete the test';
+            document.body.appendChild(btn);
+            btn.onclick = callBach;
+        }
+    </script>
+</body>
+</html>
