@@ -66,13 +66,22 @@ namespace E2EDotNet.Models
         public List<E2ETest> Tests;
         public List<E2ETest> SelectedTests;
         public bool IsRunning = false;
+
+        /// <summary>
+        /// Loads tests from a specified list of suites
+        /// </summary>
+        /// <param name="Suites">The test suites to load</param>
+        public void SetTestsFromSuites(IEnumerable<TestSuite> Suites)
+        {
+            int id = 0;
+            Tests = Suites.SelectMany(m => m.Tests.Select(a => new { Suite = m, Test = a })).Select(m => new E2ETest() { TestSuite = m.Suite, Name = m.Test.Name, Description = m.Test.Description, ID = id++, Test = m.Test }.SetUserData()).ToList();
+        }
         /// <summary>
         /// Constructs an E2E screen populated from all tests in the E2E testing assembly
         /// </summary>
         public E2EScreen()
         {
-            int id = 0;
-            Tests = TestRunner.TestSuites.SelectMany(m => m.Tests.Select(a => new { Suite = m, Test = a })).Select(m => new E2ETest() { TestSuite = m.Suite, Name = m.Test.Name, Description = m.Test.Description, ID = id++, Test = m.Test }.SetUserData()).ToList();
+            SetTestsFromSuites(TestRunner.TestSuites);
             SelectedTests = new List<E2ETest>();
         }
     }

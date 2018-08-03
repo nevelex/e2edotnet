@@ -16,7 +16,27 @@ using System.Collections.Generic;
 using System.Linq;
 namespace E2ETestRunner.Tests
 {
-    
+    [TestSuite("Sample test suite for unit testing")]
+    public class SampleTestSuite
+    {
+        [Test("Passing test", Description = "Test passes")]
+        public void PassingTest(TestRunner runner)
+        {
+
+        }
+        [Test("Failing test")]
+        public void FailingTest(TestRunner runner)
+        {
+            throw new Exception("test message");
+        }
+        [Test("Assertion failure test")]
+        public void AssertionFailure(TestRunner runner)
+        {
+            throw new AssertionFailure("test");
+        }
+
+
+    }
     [TestClass()]
     public class TestRunnerTests
     {
@@ -25,7 +45,7 @@ namespace E2ETestRunner.Tests
         {
             //arrange
             var runner = new TestTestRunner();
-            var testSuites = TestRunner.TestSuites.Take(1);
+            var testSuites = TestRunner.GetSuitesForAssembly(typeof(TestRunnerTests).Assembly).Take(1);
             var tests = testSuites.SelectMany(m => m.Tests).ToList();
             Dictionary<Test, AssertionFailure> results = new Dictionary<Test, AssertionFailure>();
             //act

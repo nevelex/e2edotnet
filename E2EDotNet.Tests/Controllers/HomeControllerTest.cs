@@ -19,6 +19,8 @@ using E2EDotNet.Controllers;
 using Moq;
 using System.IO;
 using Newtonsoft.Json;
+using E2ETestRunner;
+
 namespace E2EDotNet.Tests.Controllers
 {
     [TestClass]
@@ -77,6 +79,7 @@ namespace E2EDotNet.Tests.Controllers
         {
             // Arrange
             HomeController controller = new HomeController();
+            HomeController.screenState.SetTestsFromSuites(TestRunner.GetSuitesForAssembly(typeof(HomeControllerTest).Assembly));
             controller.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"browser\":\"UnitTests\",\"tests\":[0,2]}") };
             HomeController listeningController = new HomeController();
             listeningController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{id:-1}") };

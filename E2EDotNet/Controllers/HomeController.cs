@@ -56,7 +56,7 @@ namespace E2EDotNet.Controllers
         }
         static TestRunner ActiveRunner; //Active E2E test runner
         static List<TaskCompletionSource<Tuple<Test, AssertionFailure>>> listeners = new List<TaskCompletionSource<Tuple<Test, AssertionFailure>>>(); //event listeners for E2E completion notifications
-        static E2EScreen screenState = new E2EScreen(); //E2E screen state (singleton, we can only have one test suite executing at a time)
+        internal static E2EScreen screenState = new E2EScreen(); //E2E screen state (singleton, we can only have one test suite executing at a time)
         static int completionCount = 0; //Number of tests completed in this run
         /// <summary>
         /// Retrieves strongly-typed JSON for the current request
