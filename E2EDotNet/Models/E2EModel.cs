@@ -86,19 +86,6 @@ namespace E2EDotNet.Models
         /// </summary>
         public E2EScreen()
         {
-// #pstein: I'm still not following how someone will use this.
-//    What will they tweak in their installation? This one line here?
-//    Or the line that constructs the E2EScreen to immediately be followed
-//    by a new call to 'SetTestsFromSuites()'?
-//    If the latter, then I wouldn't call SetTestsFromSuites() here. I
-//    would just set Tests to an empty list.
-//    Either way, I'd love to see a top-level README file or however one
-//    would really do that in the /// comments... about which lines have
-//    to change in which files to run E2ETests on something outside of the
-//    the same Assembly as E2EScreen? Or is it expected that they will
-//    compile all of their E2E tests into the same assembly they compile
-//    this with?
-// REPLY (bbosak): Updated documentation (see above).
             SetTestsFromSuites(TestRunner.GetSuitesForAssembly(typeof(E2EScreen).Assembly));
             SelectedTests = new List<E2ETest>();
         }
