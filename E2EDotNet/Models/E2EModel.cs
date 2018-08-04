@@ -78,10 +78,15 @@ namespace E2EDotNet.Models
         }
         /// <summary>
         /// Constructs an E2E screen populated from all tests in the E2E testing assembly
+        /// Customization guide:
+        /// * By default; E2EScreen will load E2E tests from the current assembly (this web application); however,
+        /// many users may want to store their E2E tests in a separate assembly. If this is the case; SetTestsFromSuites should be called
+        /// with the appropriate list of E2E tests from that custom assembly, which could either be concatenated with Tests,
+        /// or the SetTestsFromSuites line below in the constructor may be removed if it is not desirable to place tests inside of this assembly.
         /// </summary>
         public E2EScreen()
         {
-            SetTestsFromSuites(TestRunner.TestSuites);
+            SetTestsFromSuites(TestRunner.GetSuitesForAssembly(typeof(E2EScreen).Assembly));
             SelectedTests = new List<E2ETest>();
         }
     }

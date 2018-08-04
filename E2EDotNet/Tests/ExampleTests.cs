@@ -16,8 +16,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using E2ETestRunner;
 using OpenQA.Selenium;
-namespace E2ETestRunner
+namespace E2EDotNet
 {
     [TestSuite("Login Screen",URL ="")]
     public class ExampleTests
