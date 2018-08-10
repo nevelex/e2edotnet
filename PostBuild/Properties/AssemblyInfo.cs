@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿// REVIW(pstein): Need license header here?
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

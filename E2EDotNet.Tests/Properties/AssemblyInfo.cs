@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿// REVIEW(pstein): Add License header here
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,8 +9,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("E2EDotNet.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
+// REVIEW(pstein): Add Nevelex Corporation here
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("E2EDotNet.Tests")]
+// REVIEW(pstein): Add Nevelex Corporation here
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

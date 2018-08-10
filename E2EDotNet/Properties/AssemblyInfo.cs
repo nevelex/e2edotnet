@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿// REVIEW(pstein): Need License header here, too?
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("E2EDotNet")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
+// REVIEW(pstein): Company is Nevelex Corporation
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("E2EDotNet")]
 [assembly: AssemblyCopyright("Copyright © Nevelex Corporation 2018")]
