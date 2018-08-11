@@ -183,7 +183,14 @@ namespace E2ETestRunner
         /// <param name="url">The URL to navigate to</param>
         public void Navigate(string url)
         {
-            driver.Navigate().GoToUrl(baseURL+"/"+url);
+            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                driver.Navigate().GoToUrl(url);
+            }
+            else
+            {
+                driver.Navigate().GoToUrl(baseURL + "/" + url);
+            }
             
         }
         /// <summary>
