@@ -35,7 +35,7 @@ namespace E2EDotNet.Controllers
     /// <summary>
     /// Home controller for E2E tests
     /// </summary>
-    public class HomeController : Controller
+    public class E2EController : Controller
     {
         public class RunTestsCommand
         {
