@@ -33,7 +33,7 @@ using E2ETestRunner;
 namespace E2EDotNet.Tests.Controllers
 {
     [TestClass]
-    public class HomeControllerTest
+    public class E2EControllerTest
     {
         /// <summary>
         /// JSON response type
@@ -60,7 +60,7 @@ namespace E2EDotNet.Tests.Controllers
         public void Index()
         {
             // Arrange
-            HomeController controller = new HomeController();
+            E2EController controller = new E2EController();
 
             // Act
             ViewResult result = controller.Index() as ViewResult;
@@ -87,12 +87,12 @@ namespace E2EDotNet.Tests.Controllers
         public void RunTestsAndGetResults()
         {
             // Arrange
-            HomeController controller = new HomeController();
-            HomeController.screenState.SetTestsFromSuites(TestRunner.GetSuitesForAssembly(typeof(HomeControllerTest).Assembly));
+            E2EController controller = new E2EController();
+            E2EController.screenState.SetTestsFromSuites(TestRunner.GetSuitesForAssembly(typeof(E2EControllerTest).Assembly));
             controller.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{\"browser\":\"UnitTests\",\"tests\":[0,2]}") };
-            HomeController listeningController = new HomeController();
+            E2EController listeningController = new E2EController();
             listeningController.ControllerContext = new ControllerContext() { HttpContext = MockRequest("{id:-1}") };
-            HomeController resultsController = new HomeController();
+            E2EController resultsController = new E2EController();
             // Act
             controller.RunTests();
             var eventListener = listeningController.LongPoll();
