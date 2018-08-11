@@ -19,8 +19,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-// REVIEW(pstein): Need License header here, too?
-// REPLY (bbosak): Fixed
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -31,8 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("E2EDotNet")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-// REVIEW(pstein): Company is Nevelex Corporation
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Nevelex Corporation")]
 [assembly: AssemblyProduct("E2EDotNet")]
 [assembly: AssemblyCopyright("Copyright © Nevelex Corporation 2018")]
 [assembly: AssemblyTrademark("")]

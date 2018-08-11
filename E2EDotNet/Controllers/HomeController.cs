@@ -1,5 +1,4 @@
-﻿// REVIEW(pstein): I would much prefer these wrapped to 80 columns like they usually are than running out to column 460!!!
-/*
+﻿/*
 Copyright (c) 2018 Nevelex Corporation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
